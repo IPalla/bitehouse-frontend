@@ -1,0 +1,32 @@
+.flex_response {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  .kpi-section {
+    margin-right: auto;
+    margin-left: auto;
+    background-color: white;
+    width:80%;
+  }
+  .metric_box {
+    margin-bottom: 30px;
+    width:15%;
+    text-align: center;
+    margin: auto;
+  }
+  .kpi-value {
+      font-size: 1.8rem;
+      font-weight: bold;
+      text-align: center;
+      color:rgba(72, 99, 160,1);
+    }
+  .kpi {
+    min-height: 200px;
+    margin: auto;
+    display: flex;
+  }
+  .kpi-title {
+    font-size: 0.8rem;
+    font-weight: bold;
+  }

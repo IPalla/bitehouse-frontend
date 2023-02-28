@@ -1,0 +1,12 @@
+mat-card{
+    margin-bottom: 10px;
+}
+mat-chip {
+    background: red;
+    color: red;
+    margin-left: 10px;
+    font-weight: bold;
+}
+.end-chips{
+    margin-left: auto;
+}
