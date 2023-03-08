@@ -50,7 +50,7 @@ export class OrderslistComponent implements OnInit {
   }
 
   getOrders(): void {
-    this.ordersService.getOrders()
+    this.ordersService.getOrders(false, false)
       .subscribe(orders => {
         console.log(orders);
         this.orders = orders.map((ordr: Order) => {
@@ -152,7 +152,7 @@ export class OrderslistComponent implements OnInit {
   }
 
   isDelayed(order: Order): boolean {
-    if (moment(order.orderData.pickupTimeUpdated, 'DD/MM HH:mm').isBefore(moment())) {
+    if (moment(order.orderData.pickupTimeUpdated, 'DD/MM HH:mm').isBefore(moment()) && (order.orderData.status === 20 || order.orderData.status === 70)) {
       return true;
     }
     return false;

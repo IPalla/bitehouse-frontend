@@ -13,7 +13,7 @@
         <mat-card-actions align="end">
             <button (click)="markAsInDelivery(order)" *ngIf="(order.orderData.parsedStatus.pickup)" mat-button>RECOGER</button>
             <button (click)="markAsDelivered(order)" *ngIf="(order.orderData.parsedStatus.markAsDelivered)" mat-button>ENTREGADO</button>
-            <button (click)="navigateToDirection(order)" mat-button>DIRECCIONES</button>
+            <button (click)="navigateToDirection(order)" *ngIf="(order.orderData.parsedStatus.spinner)" mat-button>DIRECCIONES</button>
         </mat-card-actions>
         <mat-card-footer>
             <mat-progress-bar *ngIf="(order.orderData.parsedStatus.spinner)" mode="indeterminate"></mat-progress-bar>

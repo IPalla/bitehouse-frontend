@@ -17,14 +17,21 @@ export class OrdersService {
     this.ordersRoute = 'http://localhost:8080'; //'https://whatsapp-trigger-j5lrm5ud3q-lm.a.run.app/orders';
   }
 
-  getOrders(): Observable<any> {
-    return this.http.get(`${this.ordersRoute}/orders`).pipe(
+  getOrders(onlyPickup: boolean, onlyDelivery: boolean): Observable<any> {
+    var ordersRoute = `${this.ordersRoute}/orders?day=${new Date().toISOString()}`;
+    if (onlyDelivery){
+      ordersRoute += `&only_delivery=true`;
+    }
+    if (onlyPickup){
+      ordersRoute += `&only_pickup=true`;
+    }
+    return this.http.get(ordersRoute).pipe(
       catchError(this.handleError('getHeroes', []))
     );
   }
 
   getKpis(): Observable<any> {
-    return this.http.get(`${this.ordersRoute}/kpis`).pipe(
+    return this.http.get(`${this.ordersRoute}/kpis?day=${new Date().toISOString()}`).pipe(
       catchError(this.handleError('getHeroes', []))
     );
   }

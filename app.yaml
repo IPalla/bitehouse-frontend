@@ -1,0 +1,14 @@
+runtime: nodejs16
+
+instance_class: F2
+
+env_variables: 
+  BUCKET_NAME: "gcf-v2-sources-230047363383-europe-central2"
+
+handlers:
+- url: /
+  static_files: dist/bitehouse-frontend/index.html
+  upload: dist/bitehouse-frontend/index.html
+
+- url: /
+  static_dir: dist/bitehouse-frontend 

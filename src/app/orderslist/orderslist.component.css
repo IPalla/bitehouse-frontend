@@ -1,12 +1,50 @@
-mat-card{
+mat-card {
     margin-bottom: 10px;
+    border-style: solid;
+    border-width: 1px 1px 1px 10px px;
+    cursor: pointer;
+    border-color: red;
 }
+
 mat-chip {
     background: red;
     color: red;
     margin-left: 10px;
     font-weight: bold;
 }
-.end-chips{
+
+.end-chips {
     margin-left: auto;
+}
+
+@media only screen and (max-width: 768px) {
+    mat-chip {
+        font-size: 0.7rem;
+        height: 1.2rem;
+    }
+    mat-card-title{
+        font-size: 1.2rem;
+    }
+    .end-chips{
+        width: min-content;
+    }
+    .mat-button{
+        font-size: 0.7rem;
+    }
+}
+
+@media only screen and (max-width: 330px) {
+    mat-chip {
+        font-size: 0.5rem;
+        height: 1rem;
+    }
+    mat-card-title{
+        font-size: 1rem;
+    }
+    .end-chips{
+        width: min-content;
+    }
+    .mat-button{
+        font-size: 0.6rem;
+    }
 }
