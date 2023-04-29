@@ -2,10 +2,10 @@
     <div class="flex_response kpi">
         <div class="metric_box">
             <div>
-                <span class="kpi-value">{{ kpis.totalOrders }}</span>
+                <span class="kpi-value">{{ kpis.finishedOrders }}</span>
             </div>
             <div>
-                <p class="kpi-title">Total pedidos</p>
+                <p class="kpi-title">Finalizados</p>
             </div>
         </div>
         <div class="metric_box">
@@ -18,26 +18,26 @@
         </div>
         <div class="metric_box">
             <div>
-                <span class="kpi-value">{{ kpis.averagePreparationTime }}</span>
+                <span class="kpi-value">{{ kpis.awaitingOrders }}</span>
             </div>
             <div>
-                <p class="kpi-title">Tiempo medio</p>
-            </div>
-        </div>
-        <div class="metric_box">
-            <div>
-                <span class="kpi-value">{{ kpis.minPreparationTime }}</span>
-            </div>
-            <div>
-                <p class="kpi-title">Tiempo mínimo</p>
+                <p class="kpi-title">Esperando</p>
             </div>
         </div>
         <div class="metric_box">
             <div>
-                <span class="kpi-value">{{ kpis.maxPreparationTime }}</span>
+                <span class="kpi-value">{{ kpis.inDeliveryOrders }}</span>
             </div>
             <div>
-                <p class="kpi-title">Tiempo máximo</p>
+                <p class="kpi-title">En reparto</p>
+            </div>
+        </div>
+        <div class="metric_box">
+            <div>
+                <span class="kpi-value">{{ kpis.averageEndToEndTime }}</span>
+            </div>
+            <div>
+                <p class="kpi-title">Tiempo medio de entrega</p>
             </div>
         </div>
     </div>

@@ -10,12 +10,20 @@ import { KpisComponent } from './kpis/kpis.component';
 import { HttpErrorHandler } from './http-error-handler.service';
 import { OrderslistComponent } from './orderslist/orderslist.component';
 import {MaterialExampleModule} from './material.module';
+import { PickupScreenComponent } from './pickup-screen/pickup-screen.component';
+import { DeliveryAppComponent } from './delivery-app/delivery-app.component';
+import { KpisPickupComponent } from './pickup-screen/kpis-pickup/kpis-pickup.component';
+import { BarChartPickupComponent } from './pickup-screen/bar-chart-pickup/bar-chart-pickup.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     KpisComponent,
-    OrderslistComponent
+    OrderslistComponent,
+    PickupScreenComponent,
+    DeliveryAppComponent,
+    KpisPickupComponent,
+    BarChartPickupComponent
   ],
   imports: [
     BrowserModule,

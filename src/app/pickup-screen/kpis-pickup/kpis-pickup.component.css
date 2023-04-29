@@ -1,0 +1,99 @@
+.flex_response {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.kpi-section {
+  margin-right: auto;
+  margin-left: auto;
+  background-color: white;
+  width: 80%;
+}
+
+.metric_box {
+  width: 16.5%;
+  text-align: center;
+  margin: 0;
+}
+
+.kpi-value-container {
+  height: 150px;
+  vertical-align: middle;
+  display: flex;
+  margin: auto;
+  align-items: center;
+  justify-content: center;
+}
+
+.kpi-value{
+  font-size: 3rem;
+  font-weight: bold;
+  text-align: center;
+  color: rgba(72, 99, 160, 1);
+}
+
+.prduct-quantity{
+  margin: 0px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  color: rgba(72, 99, 160, 1);
+}
+
+.kpi {
+  min-height: 200px;
+  margin: auto;
+  display: flex;
+}
+
+.kpi-title {
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+
+
+@media only screen and (max-width: 768px) {
+  .kpi-section {
+    width: 100%;
+  }
+
+  .kpi-title {
+    font-size: 0.7rem;
+    font-weight: bold;
+    overflow: hidden;
+  }
+
+  .kpi-value {
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    color: rgba(72, 99, 160, 1);
+  }
+
+  .kpi {
+    min-height: 150px;
+  }
+}
+
+@media only screen and (max-width: 330px) {
+
+  .kpi-title {
+    font-size: 0.5rem;
+    font-weight: bold;
+    overflow: hidden;
+  }
+
+  .kpi-value {
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    color: rgba(72, 99, 160, 1);
+  }
+
+  .kpi {
+    min-height: 100px;
+  }
+}

@@ -24,7 +24,14 @@ export class KpisComponent implements OnInit {
     averageDeliveryTime: '0',
     minDeliveryTime: '0',
     maxDeliveryTime: '0',
-    pickupOrders: '0'
+    pickupOrders: '0',
+    averageEndToEndTime: '0',
+    minEndToEndTime: '0',
+    maxEndToEndTime: '0',
+    finishedOrders: '0',
+    followers: 0,
+    selledProducts: [],
+    mostSelledProduct: ''
   };
   everyTwentySeconds: Observable<number> = timer(0, 20000);
   twentySecondsSubscription: Subscription | undefined;

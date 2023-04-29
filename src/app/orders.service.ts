@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 import { HttpErrorHandler, HandleError } from './http-error-handler.service';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -13,12 +14,12 @@ export class OrdersService {
   ordersRoute: string;
   constructor(private http: HttpClient, httpErrorHandler: HttpErrorHandler) {
     this.handleError = httpErrorHandler.createHandleError('HeroesService');
-    
-    this.ordersRoute = 'http://localhost:8080'; //'https://whatsapp-trigger-j5lrm5ud3q-lm.a.run.app/orders';
+    this.ordersRoute = environment.ordersUrl; //'http://localhost:8080'; //'https://whatsapp-trigger-j5lrm5ud3q-lm.a.run.app/orders';
   }
 
   getOrders(onlyPickup: boolean, onlyDelivery: boolean): Observable<any> {
-    var ordersRoute = `${this.ordersRoute}/orders?day=${new Date().toISOString()}`;
+    var ordersRoute = `${this.ordersRoute}/orders?day=${new Date('2023-04-26').toISOString()}`;
+    console.log(`Get orders ${ordersRoute}`);
     if (onlyDelivery){
       ordersRoute += `&only_delivery=true`;
     }
@@ -31,7 +32,7 @@ export class OrdersService {
   }
 
   getKpis(): Observable<any> {
-    return this.http.get(`${this.ordersRoute}/kpis?day=${new Date().toISOString()}`).pipe(
+    return this.http.get(`${this.ordersRoute}/kpis?day=${new Date('2023-04-26').toISOString()}`).pipe(
       catchError(this.handleError('getHeroes', []))
     );
   }

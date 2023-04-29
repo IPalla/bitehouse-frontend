@@ -1,0 +1,25 @@
+<div *ngFor="let order of orders; index as i;">
+    <mat-card [ngStyle]="{'background': (order.orderData.parsedStatus.color)}">
+        <mat-card-header>
+            <mat-card-title>{{order.orderData.channelOrderDisplayId}}</mat-card-title>
+            <div class="end-chips">
+                <mat-chip [ngStyle]="{'background': 'white'}" >{{order.orderData.parsedStatus.literal}}</mat-chip>
+                <mat-chip [ngStyle]="{'background': (order.orderData.isDelayed ? 'red' : 'white')}">
+                    {{order.orderData.pickupTimeUpdated}}
+                </mat-chip>
+            </div>
+            <mat-card-subtitle>{{order.orderData.deliveryAddress.street}}</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-actions align="end">
+        </mat-card-actions>
+        <mat-card-footer>
+            <mat-progress-bar *ngIf="(order.orderData.parsedStatus.spinner)" mode="indeterminate"></mat-progress-bar>
+        </mat-card-footer>
+    </mat-card>
+</div>
+<!--
+    
+            <mat-chip [ngStyle]="{'background' : 'white'}">
+                <img src="../../assets/uber_logo.png">
+            </mat-chip>
+-->

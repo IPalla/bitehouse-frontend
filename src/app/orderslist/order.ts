@@ -149,6 +149,7 @@ export interface Created {
 }
 
 export interface Order {
+    txt: string;
     orderData: OrderData;
     notification: Notification;
     preparationTime: number;

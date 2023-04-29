@@ -56,18 +56,19 @@ export class OrderslistComponent implements OnInit {
         this.orders = orders.map((ordr: Order) => {
           ordr.orderData.parsedStatus = this.getParsedStatus(ordr);
           ordr.orderData.isDelayed = this.isDelayed(ordr);
+          ordr.txt = ordr.orderData.orderType === 1 ? 'PICKUP' : 'DELIVERY';
           return ordr;
         });
         if (this.ridersScreen) {
           console.log('filtering');
           this.orders = this.orders.filter(this.onlyRidersOrders);
           this.orders.sort(this.sortByDescDate);
-        } 
-        else if (this.pickupScreen){
+        }
+        else if (this.pickupScreen) {
           this.orders = this.orders.filter(this.onlyPickupOrders);
           this.orders.sort(this.sortByDescDate);
         }
-        else if (this.kitchenScreen){
+        else if (this.kitchenScreen) {
           this.orders = this.orders.filter(this.onlyKitchenOrders);
           this.orders.sort(this.sortByDescDate);
         } else {
@@ -140,7 +141,7 @@ export class OrderslistComponent implements OnInit {
         return { status, text: 'ACCEPTED', literal: 'EN PREPARACIÓN', color: '#fddf7e', spinner: true, pickup: false, markAsDelivered: false };
       // READY FOR PICKUP
       case 70:
-        return { status, text: 'READY FOR PICKUP', literal: 'LISTO PARA RECOGER', color: '#67ebfa', spinner: true, pickup: true, markAsDelivered: false };
+        return { status, text: 'READY FOR PICKUP', literal: 'LISTO PARA RECOGER', color: order.orderData.orderType === 2 ? '#67ebfa' : '#9bfbe1', spinner: order.orderData.orderType === 2 ? true : false, pickup: true, markAsDelivered: false };
       //IN DELIVERY 
       case 80:
         return { status, text: 'IN DELIVERY', literal: 'EN REPARTO', color: '#fddf7e', spinner: true, pickup: false, markAsDelivered: true };
@@ -158,20 +159,29 @@ export class OrderslistComponent implements OnInit {
     return false;
   }
 
-  markAsInDelivery(order: Order){
+  markAsInDelivery(order: Order) {
     this.updateOrderStatus(order.orderData.channelOrderDisplayId, 80);
   }
 
-  markAsDelivered(order: Order){
+  markAsDelivered(order: Order) {
     this.updateOrderStatus(order.orderData.channelOrderDisplayId, 90)
   }
-  updateOrderStatus(orderId: string, status: number){
+  updateOrderStatus(orderId: string, status: number) {
     this.ordersService.updateStatus(orderId, status)
-    .subscribe(orders => {
-      this.getOrders();
-    });
+      .subscribe(orders => {
+        this.getOrders();
+      });
+  }
+  getOrderIcon(ordr: Order): string {
+    return '../../assets/justeat_logo.png';
+    if (ordr.orderData.channel === 6)
+      return '../../assets/glovo_logo.png';
+    if (ordr.orderData.channel === 9)
+      return '../../assets/justeat_logo.png';
+    if (ordr.orderData.channel === 7)
+      return '../../assets/uber_logo.png';
+    if (ordr.orderData.channel === 22)
+      return '../../assets/woocommerce_logo.png';
+    return '';
   }
 }
-/**
- * Screens: cocina, riders, customers
- */

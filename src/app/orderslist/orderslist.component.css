@@ -11,10 +11,15 @@ mat-chip {
     color: red;
     margin-left: 10px;
     font-weight: bold;
+    text-align: center;
 }
 
 .end-chips {
     margin-left: auto;
+}
+
+img {
+    height: 1rem;
 }
 
 @media only screen and (max-width: 768px) {
@@ -31,6 +36,9 @@ mat-chip {
     .mat-button{
         font-size: 0.7rem;
     }
+    img {
+        height: 0.8rem;
+    }
 }
 
 @media only screen and (max-width: 330px) {
@@ -46,5 +54,8 @@ mat-chip {
     }
     .mat-button{
         font-size: 0.6rem;
+    }
+    img {
+        height: 0.6rem;
     }
 }

@@ -12,5 +12,12 @@ export interface Kpis {
     averageDeliveryTime: string;
     minDeliveryTime: string;
     maxDeliveryTime: string;
+    averageEndToEndTime: string;
+    minEndToEndTime: string;
+    maxEndToEndTime: string;
     pickupOrders: string;
+    finishedOrders: string;
+    followers: number;
+    selledProducts: [][];
+    mostSelledProduct: string;
 }

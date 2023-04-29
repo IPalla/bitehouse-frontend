@@ -2,11 +2,16 @@
     <mat-card [ngStyle]="{'background': (order.orderData.parsedStatus.color)}">
         <mat-card-header>
             <mat-card-title>{{order.orderData.channelOrderDisplayId}}</mat-card-title>
+            <img src="../../assets/uber_logo.png">
             <div class="end-chips">
                 <mat-chip [ngStyle]="{'background': 'white'}" >{{order.orderData.parsedStatus.literal}}</mat-chip>
                 <mat-chip [ngStyle]="{'background': (order.orderData.isDelayed ? 'red' : 'white')}">
                     {{order.orderData.pickupTimeUpdated}}
                 </mat-chip>
+                <mat-chip [ngStyle]="{'background' : 'white'}">
+                    {{order.txt}}
+                </mat-chip>
+                
             </div>
             <mat-card-subtitle>{{order.orderData.deliveryAddress.street}}</mat-card-subtitle>
         </mat-card-header>
@@ -21,5 +26,8 @@
     </mat-card>
 </div>
 <!--
-    [ngStyle]="{'background': (isDelayed(order) ? 'red' : '#e0e0e0')}"
+    
+            <mat-chip [ngStyle]="{'background' : 'white'}">
+                <img src="../../assets/uber_logo.png">
+            </mat-chip>
 -->
