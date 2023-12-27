@@ -1,4 +1,4 @@
-docker image rm bitehouse-frontend
+docker image rm bitehouse-frontend --force
 ng build --configuration=development
 rm -r nginx-hosting/dist
 mv dist nginx-hosting

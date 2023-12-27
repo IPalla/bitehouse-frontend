@@ -36,11 +36,19 @@ export class KpisPickupComponent implements OnInit {
   everyTwentySeconds: Observable<number> = timer(0, 20000);
   twentySecondsSubscription: Subscription | undefined;
   topBurgers: any[] = this.getTopBurgers();
+  width: number = 0;
+  height: number = 0;
   constructor(private ordersService: OrdersService) { }
 
   ngOnInit(): void {
+    this.width = window.innerWidth;
+    this.height = window.innerHeight;
+    window.resizeTo(1251, 907);
+    window.focus();
     this.twentySecondsSubscription = this.everyTwentySeconds.subscribe((seconds) => {
       this.getKpis();
+      this.width = window.innerWidth;
+      this.height = window.innerHeight;
     });
     this.getKpis();
   }
@@ -60,6 +68,7 @@ export class KpisPickupComponent implements OnInit {
     topBurgers.set('TRUFFLE BURGER', { quantity: 0, src: this.getImgSrcFromBurgerName('TRUFFLE BURGER') });
     topBurgers.set('MOJO ROJO CRUNCHY CHICKEN', { quantity: 0, src: this.getImgSrcFromBurgerName('MOJO ROJO CRUNCHY CHICKEN') });
     topBurgers.set('CRUNCHY CHICKEN BUN', { quantity: 0, src: this.getImgSrcFromBurgerName('CRUNCHY CHICKEN BUN') });
+    topBurgers.set('PULLED PORK BURGER', { quantity: 0, src: this.getImgSrcFromBurgerName('PULLED PORK BURGER') });
 
     this.kpis.selledProducts.map((soldProduct: any) => {
       var product = topBurgers.get(soldProduct[0]);
@@ -90,6 +99,8 @@ export class KpisPickupComponent implements OnInit {
         return '../../../assets/mojo-rojo-nobg2.png';
       case 'CRUNCHY CHICKEN BUN':
         return '../../../assets/crunchy-chicken-nobg2.png';
+      case 'PULLED PORK BURGER':
+        return '../../../assets/pulled-pork-nobg2.png';
     }
     return '';
   }

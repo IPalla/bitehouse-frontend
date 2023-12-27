@@ -39,7 +39,7 @@ app-pickup-screen{
     top: 0;
     left: 0;
     right: 0;
-    height: 120px;
+    height: 10vh;
     display: flex;
     align-items: center;
     background-color: white;

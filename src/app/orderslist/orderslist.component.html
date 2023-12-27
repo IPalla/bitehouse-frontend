@@ -2,7 +2,7 @@
     <mat-card [ngStyle]="{'background': (order.orderData.parsedStatus.color)}">
         <mat-card-header>
             <mat-card-title>{{order.orderData.channelOrderDisplayId}}</mat-card-title>
-            <img src="../../assets/uber_logo.png">
+            <mat-card-subtitle>{{order?.orderData?.payment?.amount !== undefined ? (order.orderData.payment.amount / 100) : 0}}</mat-card-subtitle>
             <div class="end-chips">
                 <mat-chip [ngStyle]="{'background': 'white'}" >{{order.orderData.parsedStatus.literal}}</mat-chip>
                 <mat-chip [ngStyle]="{'background': (order.orderData.isDelayed ? 'red' : 'white')}">
@@ -10,6 +10,15 @@
                 </mat-chip>
                 <mat-chip [ngStyle]="{'background' : 'white'}">
                     {{order.txt}}
+                </mat-chip>
+                <mat-chip [ngStyle]="{'background' : '#E9D502'}"  *ngIf="containsShakes(order)">
+                    BATIDOS
+                </mat-chip>
+                <mat-chip [ngStyle]="{'background' : '#E9D502'}" *ngIf="containsDrinks(order)">
+                    BEBIDAS
+                </mat-chip>
+                <mat-chip [ngStyle]="{'background' : '#E9D502'}" *ngIf="containsCakes(order)">
+                    CAKES
                 </mat-chip>
                 
             </div>
@@ -19,6 +28,7 @@
             <button (click)="markAsInDelivery(order)" *ngIf="(order.orderData.parsedStatus.pickup)" mat-button>RECOGER</button>
             <button (click)="markAsDelivered(order)" *ngIf="(order.orderData.parsedStatus.markAsDelivered)" mat-button>ENTREGADO</button>
             <button (click)="navigateToDirection(order)" *ngIf="(order.orderData.parsedStatus.spinner)" mat-button>DIRECCIONES</button>
+            <button (click)="openOrderDialogInfo(order)" mat-button>INFO</button>
         </mat-card-actions>
         <mat-card-footer>
             <mat-progress-bar *ngIf="(order.orderData.parsedStatus.spinner)" mode="indeterminate"></mat-progress-bar>

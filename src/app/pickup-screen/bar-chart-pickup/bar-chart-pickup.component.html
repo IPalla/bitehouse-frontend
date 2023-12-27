@@ -1,10 +1,10 @@
-<div *ngFor="let order of orders; index as i;">
+<div class="orders-chart" *ngFor="let order of orders; index as i;">
     <mat-card [ngStyle]="{'background': (order.orderData.parsedStatus.color)}">
         <mat-card-header>
             <mat-card-title>{{order.orderData.channelOrderDisplayId}}</mat-card-title>
             <div class="end-chips">
                 <mat-chip [ngStyle]="{'background': 'white'}" >{{order.orderData.parsedStatus.literal}}</mat-chip>
-                <mat-chip [ngStyle]="{'background': (order.orderData.isDelayed ? 'red' : 'white')}">
+                <mat-chip [ngStyle]="{'background': 'white'}">
                     {{order.orderData.pickupTimeUpdated}}
                 </mat-chip>
             </div>
@@ -17,9 +17,3 @@
         </mat-card-footer>
     </mat-card>
 </div>
-<!--
-    
-            <mat-chip [ngStyle]="{'background' : 'white'}">
-                <img src="../../assets/uber_logo.png">
-            </mat-chip>
--->

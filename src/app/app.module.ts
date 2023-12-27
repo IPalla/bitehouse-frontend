@@ -14,6 +14,7 @@ import { PickupScreenComponent } from './pickup-screen/pickup-screen.component';
 import { DeliveryAppComponent } from './delivery-app/delivery-app.component';
 import { KpisPickupComponent } from './pickup-screen/kpis-pickup/kpis-pickup.component';
 import { BarChartPickupComponent } from './pickup-screen/bar-chart-pickup/bar-chart-pickup.component';
+import { DATE_PIPE_DEFAULT_OPTIONS } from "@angular/common";
 
 @NgModule({
   declarations: [
@@ -34,7 +35,11 @@ import { BarChartPickupComponent } from './pickup-screen/bar-chart-pickup/bar-ch
     MaterialExampleModule
   ],
   providers: [
-    HttpErrorHandler
+    HttpErrorHandler,
+    {
+      provide: DATE_PIPE_DEFAULT_OPTIONS,
+      useValue: { dateFormat: "longDate" }
+    }
   ],
   bootstrap: [AppComponent]
 })

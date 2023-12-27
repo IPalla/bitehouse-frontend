@@ -135,6 +135,7 @@ export interface OrderData {
     channelOrderKey: string;
     tip: number;
     packaging: Packaging;
+    analytics: Analytics;
 }
 
 export interface Notification {
@@ -155,4 +156,18 @@ export interface Order {
     preparationTime: number;
     created: Created;
     env: string;
+    deliveryDate: string;
+}
+
+export interface Analytics {
+    packagingTime: number;
+    expectedReadyTs: string;
+    readyTs: string;
+    inDeliveryTs: string;
+    waitingPickupTime: number;
+    expectedTotalOrderTs: string;
+    totalOrderTime: number;
+    deliveredTs: string;
+    expectedDeliveryTs: string;
+    createdTs: string;
 }

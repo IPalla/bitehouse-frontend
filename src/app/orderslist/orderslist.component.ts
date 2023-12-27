@@ -1,9 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { OrdersService } from '../orders.service';
-import { Order } from './order';
+import { Analytics, Order } from './order';
 import * as moment from 'moment';
 import { Observable, Subscription, timer } from 'rxjs';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatCardModule } from '@angular/material/card';
+
+
 
 @Component({
   selector: 'app-orderslist',
@@ -20,7 +24,7 @@ export class OrderslistComponent implements OnInit {
   ridersScreen: boolean = false;
   pickupScreen: boolean = false;
   kitchenScreen: boolean = false;
-  constructor(private ordersService: OrdersService, private route: ActivatedRoute) { }
+  constructor(private ordersService: OrdersService, private route: ActivatedRoute, public dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.oneSecondSubscription = this.everyFiveSeconds.subscribe((seconds) => {
@@ -52,15 +56,13 @@ export class OrderslistComponent implements OnInit {
   getOrders(): void {
     this.ordersService.getOrders(false, false)
       .subscribe(orders => {
-        console.log(orders);
         this.orders = orders.map((ordr: Order) => {
           ordr.orderData.parsedStatus = this.getParsedStatus(ordr);
           ordr.orderData.isDelayed = this.isDelayed(ordr);
-          ordr.txt = ordr.orderData.orderType === 1 ? 'PICKUP' : 'DELIVERY';
+          ordr.txt = ordr.orderData.orderType === 2 ? 'DELIVERY' : 'PICKUP';
           return ordr;
         });
         if (this.ridersScreen) {
-          console.log('filtering');
           this.orders = this.orders.filter(this.onlyRidersOrders);
           this.orders.sort(this.sortByDescDate);
         }
@@ -153,7 +155,9 @@ export class OrderslistComponent implements OnInit {
   }
 
   isDelayed(order: Order): boolean {
-    if (moment(order.orderData.pickupTimeUpdated, 'DD/MM HH:mm').isBefore(moment()) && (order.orderData.status === 20 || order.orderData.status === 70)) {
+    if (moment(order.orderData.pickupTimeUpdated, 'DD/MM HH:mm').isBefore(moment()) &&
+      // If pickup time is passed and is in prearation or order is waiting to be delivered
+      (order.orderData.status === 20 || (order.orderData.status === 70 && order.orderData.orderType === 2))) {
       return true;
     }
     return false;
@@ -172,6 +176,39 @@ export class OrderslistComponent implements OnInit {
         this.getOrders();
       });
   }
+
+  containsShakes(order: Order) {
+    return order.orderData.items.find(item => item.name.includes('SHAKE')) != null;
+  }
+
+  containsCakes(order: Order) {
+    return order.orderData.items.find(item => item.name.includes('CAKE')) != null;
+  }
+
+  containsDrinks(order: Order) {
+    var drinks = [
+      'NESTEA',
+      'COCA COLA',
+      'FANTA',
+      'AQUARIUS',
+      'CERVEZA',
+      'SPRITE'
+    ];
+    var drinksRegex = new RegExp(drinks.join('|'));
+    return order.orderData.items.find(item => drinksRegex.test(item.name)) != null;
+  }
+  openOrderDialogInfo(order: Order) {
+    const dialogRef = this.dialog.open(DialogOverviewExampleDialog, {
+      width: '250px',
+      data: order
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      console.log('The dialog was closed');
+    });
+  }
+
+
   getOrderIcon(ordr: Order): string {
     return '../../assets/justeat_logo.png';
     if (ordr.orderData.channel === 6)
@@ -183,5 +220,39 @@ export class OrderslistComponent implements OnInit {
     if (ordr.orderData.channel === 22)
       return '../../assets/woocommerce_logo.png';
     return '';
+  }
+}
+
+@Component({
+  selector: 'dialog-overview-example-dialog',
+  styleUrls: ['./order.dialog.css'],
+  templateUrl: './order.dialog.html',
+  standalone: true,
+  imports: [
+    MatCardModule
+  ]
+})
+export class DialogOverviewExampleDialog {
+
+  constructor(
+    public dialogRef: MatDialogRef<DialogOverviewExampleDialog>,
+    @Inject(MAT_DIALOG_DATA) public order: Order) {
+  }
+
+  onClose(): void {
+    this.dialogRef.close();
+  }
+
+  dateToString(date: string): string {
+    return date.split(" ")[1];
+  }
+
+  diffDates(date1: string, date2: string): number {
+    return moment(date1, 'DD/MM HH:mm').diff(moment(date2, 'DD/MM HH:mm')) / (1000*60);
+  }
+
+  callToCustomer(order: Order): void{
+    console.log(`tel:${order.orderData.customer.phoneNumber}`)
+    location.href=`tel:${order.orderData.customer.phoneNumber}`;
   }
 }

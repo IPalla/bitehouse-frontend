@@ -14,7 +14,7 @@ import { Observable, Subscription, timer } from 'rxjs';
 export class BarChartPickupComponent implements OnInit {
   orders: Order[] = [];
   everyFiveSeconds: Observable<number> = timer(0, 5000);
-  everyTwentySeconds: Observable<number> = timer(0, 20000);
+  everyTwentySeconds: Observable<number> = timer(0, 5000);
   oneSecondSubscription: Subscription | undefined;
   twentySecondsSubscription: Subscription | undefined;
   ridersScreen: boolean = false;
@@ -52,68 +52,43 @@ export class BarChartPickupComponent implements OnInit {
   getOrders(): void {
     this.ordersService.getOrders(false, false)
       .subscribe(orders => {
-        console.log(orders);
+        this.compareOrdersAndPlayAudios(orders, this.orders);
         this.orders = orders.map((ordr: Order) => {
           ordr.orderData.parsedStatus = this.getParsedStatus(ordr);
           ordr.orderData.isDelayed = this.isDelayed(ordr);
-          ordr.txt = ordr.orderData.orderType === 1 ? 'PICKUP' : 'DELIVERY';
+          ordr.txt = ordr.orderData.orderType === 2 ? 'DELIVERY' : ordr.orderData.orderType === 3 ? 'KIOSKO' : 'PICKUP';
           return ordr;
         });
-        if (this.ridersScreen) {
-          console.log('filtering');
-          this.orders = this.orders.filter(this.onlyRidersOrders);
-          this.orders.sort(this.sortByDescDate);
-        }
-        else if (this.pickupScreen) {
-          this.orders = this.orders.filter(this.onlyPickupOrders);
-          this.orders.sort(this.sortByDescDate);
-        }
-        else if (this.kitchenScreen) {
-          this.orders = this.orders.filter(this.onlyKitchenOrders);
-          this.orders.sort(this.sortByDescDate);
-        } else {
-          this.orders.sort(this.sortByAscDate);
-        }
+        this.orders = this.orders.filter(this.onlyPickupOrders);
+        this.orders.sort(this.sortByAscDate);
       });
   }
-
-  onlyRidersOrders(order: Order) {
-    if (order.orderData.status === 90) {
-      return false; // FINALISED ORDER
-    }
-    if (order.orderData.orderType === 1) {
-      return false;
-    }
-    return true;
-  }
-
-  onlyKitchenOrders(order: Order) {
-    if (order.orderData.status === 90) {
-      return false; // FINALISED ORDER
-    }
-    return true;
+  compareOrdersAndPlayAudios(newOrders: any, currentOrders: Order[]) {
+    newOrders.forEach((ordr: any) => {
+      if (ordr.orderData.status === 70) {
+        console.log(`Comparing order ${ordr.orderData.channelOrderDisplayId}`);
+        const orderInPreviousState = currentOrders.find(order=>{
+          return order.orderData.channelOrderDisplayId === ordr.orderData.channelOrderDisplayId;
+        });
+        console.log(`Order found ${orderInPreviousState?.orderData.status}`);
+        if (orderInPreviousState !== undefined && orderInPreviousState.orderData.status === 20 && ordr.orderData.status === 70){
+          console.log(`Playinh audio`);
+          this.playReadyAudio(ordr);
+        }
+      }
+    });
   }
 
   onlyPickupOrders(order: Order) {
-    if (order.orderData.status === 90) {
-      return false; // FINALISED ORDER
+    if (order.orderData.orderType === 1 || order.orderData.orderType === 3) {
+      return true;
     }
-    if (order.orderData.orderType === 2) {
-      return false;
-    }
-    return true;
+    return false;
   }
 
-  sortByDescDate(ordr1: Order, ordr2: Order): number {
-    var date1 = moment(ordr1.orderData.pickupTimeUpdated, 'DD/MM HH:mm');
-    var date2 = moment(ordr2.orderData.pickupTimeUpdated, 'DD/MM HH:mm');
-    if (date1.isBefore(date2)) {
-      return -1;
-    }
-    if (date1.isAfter(date2)) {
-      return 1;
-    }
-    return 0;
+  playReadyAudio(order: Order) {
+    const audio = new Audio(this.ordersService.getOrderAudioUrl(order.orderData.channelOrderDisplayId));
+    audio.play();
   }
 
 
@@ -127,11 +102,6 @@ export class BarChartPickupComponent implements OnInit {
       return -1;
     }
     return 0;
-  }
-
-  navigateToDirection(order: Order): void {
-    const address = order.orderData.deliveryAddress.source;
-    window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURI(address)}`, "_blank");
   }
 
   getParsedStatus(order: Order): any {
@@ -157,31 +127,5 @@ export class BarChartPickupComponent implements OnInit {
       return true;
     }
     return false;
-  }
-
-  markAsInDelivery(order: Order) {
-    this.updateOrderStatus(order.orderData.channelOrderDisplayId, 80);
-  }
-
-  markAsDelivered(order: Order) {
-    this.updateOrderStatus(order.orderData.channelOrderDisplayId, 90)
-  }
-  updateOrderStatus(orderId: string, status: number) {
-    this.ordersService.updateStatus(orderId, status)
-      .subscribe(orders => {
-        this.getOrders();
-      });
-  }
-  getOrderIcon(ordr: Order): string {
-    return '../../assets/justeat_logo.png';
-    if (ordr.orderData.channel === 6)
-      return '../../assets/glovo_logo.png';
-    if (ordr.orderData.channel === 9)
-      return '../../assets/justeat_logo.png';
-    if (ordr.orderData.channel === 7)
-      return '../../assets/uber_logo.png';
-    if (ordr.orderData.channel === 22)
-      return '../../assets/woocommerce_logo.png';
-    return '';
   }
 }
