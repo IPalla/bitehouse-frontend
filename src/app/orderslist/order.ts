@@ -15,6 +15,8 @@ export interface Customer {
 }
 
 export interface Courier {
+    deliveryBy: string;
+    phoneNumber: string;
 }
 
 export interface SubItem {

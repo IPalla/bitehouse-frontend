@@ -4,6 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, retry } from 'rxjs/operators';
 import { HttpErrorHandler, HandleError } from './http-error-handler.service';
 import { environment } from 'src/environments/environment';
+import { AuthResponse } from 'src/app/services/auth.response';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,7 @@ export class OrdersService {
   ordersRoute: string;
   mainWpRoute: string;
   dineInWpRoute: string;
+  token: any;
   constructor(private http: HttpClient, httpErrorHandler: HttpErrorHandler) {
     this.handleError = httpErrorHandler.createHandleError('HeroesService');
     this.ordersRoute = environment.ordersUrl; //'http://localhost:8080'; //'https://whatsapp-trigger-j5lrm5ud3q-lm.a.run.app/orders';
@@ -23,6 +25,7 @@ export class OrdersService {
 
   getOrders(onlyPickup: boolean, onlyDelivery: boolean): Observable<any> {
     var ordersRoute = `${this.ordersRoute}/orders?day=${new Date().toISOString()}`;
+
     console.log(`Get orders ${ordersRoute}`);
     if (onlyDelivery) {
       ordersRoute += `&only_delivery=true`;
@@ -36,6 +39,19 @@ export class OrdersService {
     );
   }
 
+  login(name: string, password: string): Observable<any> {
+    var observable = this.http.post<any>(`${this.ordersRoute}/auth`, { name, password }).pipe(
+      catchError(this.handleError('getHeroes', []))
+    );
+
+    observable.subscribe((resp: AuthResponse) => {
+      this.token = `Bearer ` + resp.token;
+      console.log(`Storing token: ${this.token}`);
+      localStorage.setItem('token', this.token);
+    });
+    return observable;
+  }
+
   getOrderAudioUrl(orderId: string): string {
     return `${this.ordersRoute}/orders/${orderId}/audio`;
   }
@@ -47,7 +63,14 @@ export class OrdersService {
   }
 
   updateStatus(orderId: string, status: number): Observable<any> {
-    return this.http.patch(`${this.ordersRoute}/order-update/${orderId}`, { status }).pipe(
+    var token: string = localStorage.getItem('token') || this.token;
+    
+    if (token == undefined){
+      console.log(`Error invalid token`);
+      window.location.href = '/login';
+      return throwError({status: 401});
+    }
+    return this.http.patch(`${this.ordersRoute}/order-update/${orderId}`, { status }, {headers: {'Authorization': token}}).pipe(
       catchError(this.handleError('getHeroes', []))
     );
   }

@@ -10,3 +10,8 @@ docker run -dp 8080:8080 bitehouse-frontend
 
 //ng build --output-path docs --base-href /repository-name/
 //ng build --configuration=development --output-path docs --base-href /bitehouse-frontend/
+// europe-central2
+
+
+
+//docker image rm bitehouse-frontend --force

@@ -34,7 +34,10 @@ export class HttpErrorHandler {
       const message = (error.error instanceof ErrorEvent) ?
         error.error.message :
        `server returned code ${error.status} with body "${error.error}"`;
-
+      if (error.status === 401){
+        console.log(`Unauthorized, redirecting to login form`);
+        window.location.href = '/login';
+      }
       // TODO: better job of transforming error for user consumption
 
       // Let the app keep running by returning a safe result.

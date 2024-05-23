@@ -3,16 +3,23 @@
     <mat-card-title>{{order.orderData.channelOrderDisplayId}} - {{dateToString(order.orderData.analytics.expectedTotalOrderTs)}}</mat-card-title>
     <mat-card-subtitle>Cliente: <b>{{order.orderData.customer?.name}}</b></mat-card-subtitle>
     <mat-card-subtitle>Recoger a las: <b>{{dateToString(order.orderData.analytics.expectedReadyTs)}}</b></mat-card-subtitle>
-    <mat-card-subtitle>Entregar a las: <b>{{dateToString(order.orderData.analytics.expectedDeliveryTs)}}</b></mat-card-subtitle>
+    <mat-card-subtitle *ngIf="order.orderData.orderType===2">Entregar a las: <b>{{dateToString(order.orderData.analytics.expectedDeliveryTs)}}</b></mat-card-subtitle>
 
     <mat-card-subtitle>Hora de entrega en cocina: <b>{{ dateToString(order.orderData.analytics.readyTs) }} ({{ diffDates(order.orderData.analytics.readyTs, order.orderData.analytics.expectedReadyTs) }})</b></mat-card-subtitle>
-    <mat-card-subtitle>Hora de entrega en reparto: <b>{{ dateToString(order.orderData.analytics.deliveredTs) }} ({{diffDates(order.orderData.analytics.deliveredTs, order.orderData.analytics.expectedDeliveryTs)}})</b></mat-card-subtitle>
+    <mat-card-subtitle *ngIf="order.orderData.orderType===2">Hora de comienzo delivery: <b>{{ dateToString(order.orderData.analytics.inDeliveryTs) }} </b></mat-card-subtitle>
+    <mat-card-subtitle *ngIf="order.orderData.orderType===2">Hora de entrega en reparto: <b>{{ dateToString(order.orderData.analytics.deliveredTs) }} ({{diffDates(order.orderData.analytics.deliveredTs, order.orderData.analytics.expectedDeliveryTs)}})</b></mat-card-subtitle>
     <mat-card-subtitle>Tiempo total del pedido: <b>{{order.orderData.analytics.totalOrderTime}}</b></mat-card-subtitle>
     <mat-card-subtitle>Notas: <b>{{order.orderData.note}}</b></mat-card-subtitle>
+    <mat-card-subtitle *ngIf="order.orderData.orderType===2">Repartidor: <b>{{order.orderData.courier.deliveryBy}}</b></mat-card-subtitle>
     
     </mat-card-header>
 
     <mat-card-actions>
         <button mat-button (click)="callToCustomer(order)">LLAMAR</button>
+        <button *ngIf="order.orderData.orderType===2" mat-button (click)="callToRider(order)">LLAMAR RIDER</button>
     </mat-card-actions>
 </mat-card>
+
+<!--
+    https://material.angular.io/components/stepper/overview
+-->

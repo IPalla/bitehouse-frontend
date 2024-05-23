@@ -108,7 +108,13 @@ export class BarChartPickupComponent implements OnInit {
     switch (order.orderData.status) {
       // ACCEPTED
       case 20:
-        return { status, text: 'ACCEPTED', literal: 'EN PREPARACIÓN', color: '#fddf7e', spinner: true, pickup: false, markAsDelivered: false };
+        return { status, text: 'ACCEPTED', literal: 'ACEPTADO', color: '#fddf7e', spinner: true, pickup: false, markAsDelivered: false };
+      // IN PROGRESS
+      case 50:
+        return { status, text: 'IN PROGRESS', literal: 'EN PREPARACIÓN', color: '#fddf7e', spinner: true, pickup: false, markAsDelivered: false };
+      // PREPARED
+      case 60:
+        return { status, text: 'IN PACKAGING', literal: 'EN PACKAGING', color: '#fddf7e', spinner: true, pickup: false, markAsDelivered: false };
       // READY FOR PICKUP
       case 70:
         return { status, text: 'READY FOR PICKUP', literal: 'LISTO PARA RECOGER', color: order.orderData.orderType === 2 ? '#67ebfa' : '#9bfbe1', spinner: order.orderData.orderType === 2 ? true : false, pickup: true, markAsDelivered: false };

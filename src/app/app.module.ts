@@ -15,6 +15,8 @@ import { DeliveryAppComponent } from './delivery-app/delivery-app.component';
 import { KpisPickupComponent } from './pickup-screen/kpis-pickup/kpis-pickup.component';
 import { BarChartPickupComponent } from './pickup-screen/bar-chart-pickup/bar-chart-pickup.component';
 import { DATE_PIPE_DEFAULT_OPTIONS } from "@angular/common";
+import { LoginComponent } from './login/login.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -24,7 +26,8 @@ import { DATE_PIPE_DEFAULT_OPTIONS } from "@angular/common";
     PickupScreenComponent,
     DeliveryAppComponent,
     KpisPickupComponent,
-    BarChartPickupComponent
+    BarChartPickupComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
@@ -32,7 +35,9 @@ import { DATE_PIPE_DEFAULT_OPTIONS } from "@angular/common";
     BrowserAnimationsModule,
     MatSlideToggleModule,
     HttpClientModule,
-    MaterialExampleModule
+    MaterialExampleModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [
     HttpErrorHandler,
