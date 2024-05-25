@@ -1,27 +1,25 @@
 <div *ngFor="let order of orders; index as i">
-  <mat-card [ngStyle]="{ background: order.orderData.parsedStatus.color }">
+  <mat-card [ngStyle]="getBackgroundColorFromOrder(order)">
     <mat-card-header>
       <mat-card-title>{{
-        order.orderData.channelOrderDisplayId
+        order.id
       }}</mat-card-title>
       <mat-card-subtitle>{{
-        order?.orderData?.payment?.amount !== undefined
-          ? order.orderData.payment.amount / 100
-          : 0
+        (order?.amount || 100) / 100
       }}</mat-card-subtitle>
       <div class="end-chips">
         <mat-chip [ngStyle]="{ background: 'white' }">{{
-          order.orderData.parsedStatus.literal
+          order?.status?.status
         }}</mat-chip>
         <mat-chip
           [ngStyle]="{
-            background: order.orderData.isDelayed ? 'red' : 'white'
+            background: isDelayed(order) ? 'red' : 'white'
           }"
         >
-          {{ order.orderData.pickupTimeUpdated }}
+          {{ instantToDate(order?.operation?.expectedReadyTs) }}
         </mat-chip>
         <mat-chip [ngStyle]="{ background: 'white' }">
-          {{ order.txt }}
+          {{ order?.type }}
         </mat-chip>
         <mat-chip
           [ngStyle]="{ background: '#E9D502' }"
@@ -43,27 +41,27 @@
         </mat-chip>
       </div>
       <mat-card-subtitle>{{
-        order.orderData.deliveryAddress?.street
+        order?.customer?.address
       }}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-actions align="end">
       <button
         (click)="markAsInDelivery(order)"
-        *ngIf="order.orderData.parsedStatus.pickup"
+        *ngIf="recogerButtonVisible(order)"
         mat-button
       >
         RECOGER
       </button>
       <button
         (click)="markAsDelivered(order)"
-        *ngIf="order.orderData.parsedStatus.markAsDelivered"
+        *ngIf="entregarButtonVisible(order)"
         mat-button
       >
         ENTREGADO
       </button>
       <button
         (click)="navigateToDirection(order)"
-        *ngIf="order.orderData.parsedStatus.spinner"
+        *ngIf="true"
         mat-button
       >
         DIRECCIONES
@@ -72,15 +70,9 @@
     </mat-card-actions>
     <mat-card-footer>
       <mat-progress-bar
-        *ngIf="order.orderData.parsedStatus.spinner"
+        *ngIf="true"
         mode="indeterminate"
       ></mat-progress-bar>
     </mat-card-footer>
   </mat-card>
 </div>
-<!--
-    
-            <mat-chip [ngStyle]="{'background' : 'white'}">
-                <img src="../../assets/uber_logo.png">
-            </mat-chip>
--->

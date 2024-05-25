@@ -1,9 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { OrdersService } from '../orders.service';
-import { Analytics, Order } from './order';
-import * as moment from 'moment';
-import { Observable, Subscription, timer } from 'rxjs';
+import * as moment from 'moment-timezone';
 import {
   MAT_DIALOG_DATA,
   MatDialog,
@@ -11,42 +8,28 @@ import {
 } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
+import { Order, OrdersAPIService, Status, StatusUpdate } from '../services/delivery-manager';
+import { Observable, timer } from 'rxjs';
 
 @Component({
   selector: 'app-orderslist',
   templateUrl: './orderslist.component.html',
   styleUrls: ['./orderslist.component.css'],
-  providers: [OrdersService],
+  providers: [OrdersAPIService],
 })
 export class OrderslistComponent implements OnInit {
   orders: Order[] = [];
-  everyFiveSeconds: Observable<number> = timer(0, 5000);
-  everyTwentySeconds: Observable<number> = timer(0, 20000);
-  oneSecondSubscription: Subscription | undefined;
-  twentySecondsSubscription: Subscription | undefined;
   ridersScreen: boolean = false;
   pickupScreen: boolean = false;
   kitchenScreen: boolean = false;
-  constructor(
-    private ordersService: OrdersService,
-    private route: ActivatedRoute,
-    public dialog: MatDialog
-  ) {}
+  everyFiveSeconds: Observable<number> = timer(0, 5000);
+  constructor(private route: ActivatedRoute, public dialog: MatDialog, 
+    private ordersApiService: OrdersAPIService) {}
 
   ngOnInit(): void {
-    this.oneSecondSubscription = this.everyFiveSeconds.subscribe((seconds) => {
-      this.orders = [
-        ...this.orders.map((ordr: Order) => {
-          ordr.orderData.isDelayed = this.isDelayed(ordr);
-          return ordr;
-        }),
-      ];
+    this.everyFiveSeconds.subscribe((seconds) => {
+      this.getOrders();
     });
-    this.twentySecondsSubscription = this.everyTwentySeconds.subscribe(
-      (seconds) => {
-        this.getOrders();
-      }
-    );
     this.route.queryParams.subscribe((params) => {
       this.kitchenScreen = false;
       this.ridersScreen = false;
@@ -63,6 +46,12 @@ export class OrderslistComponent implements OnInit {
   }
 
   getOrders(): void {
+    this.ordersApiService.ordersGet().subscribe((orders) => {
+      console.log(`ORders retrieved!!`);
+      console.log(JSON.stringify(orders));
+      this.orders = orders || [];
+    });
+    /*
     this.ordersService.getOrders(false, false).subscribe((orders) => {
       this.orders = orders.map((ordr: Order) => {
         ordr.orderData.parsedStatus = this.getParsedStatus(ordr);
@@ -82,185 +71,79 @@ export class OrderslistComponent implements OnInit {
       } else {
         this.orders.sort(this.sortByAscDate);
       }
-    });
-  }
-
-  onlyRidersOrders(order: Order) {
-    if (order.orderData.status === 90) {
-      return false; // FINALISED ORDER
-    }
-    if (order.orderData.orderType === 1) {
-      return false;
-    }
-    return true;
-  }
-
-  onlyKitchenOrders(order: Order) {
-    if (order.orderData.status === 90) {
-      return false; // FINALISED ORDER
-    }
-    return true;
-  }
-
-  onlyPickupOrders(order: Order) {
-    if (order.orderData.status === 90) {
-      return false; // FINALISED ORDER
-    }
-    if (order.orderData.orderType === 2) {
-      return false;
-    }
-    return true;
-  }
-
-  sortByDescDate(ordr1: Order, ordr2: Order): number {
-    var date1 = moment(ordr1.orderData.pickupTimeUpdated, 'DD/MM HH:mm');
-    var date2 = moment(ordr2.orderData.pickupTimeUpdated, 'DD/MM HH:mm');
-    if (date1.isBefore(date2)) {
-      return -1;
-    }
-    if (date1.isAfter(date2)) {
-      return 1;
-    }
-    return 0;
-  }
-
-  sortByAscDate(ordr1: Order, ordr2: Order): number {
-    var date1 = moment(ordr1.orderData.pickupTimeUpdated, 'DD/MM HH:mm');
-    var date2 = moment(ordr2.orderData.pickupTimeUpdated, 'DD/MM HH:mm');
-    if (date1.isBefore(date2)) {
-      return 1;
-    }
-    if (date1.isAfter(date2)) {
-      return -1;
-    }
-    return 0;
+    });*/
   }
 
   navigateToDirection(order: Order): void {
-    const address = order.orderData.deliveryAddress.source;
+    const address = order?.customer?.address || '';
     window.open(
       `https://www.google.com/maps/search/?api=1&query=${encodeURI(address)}`,
       '_blank'
     );
   }
 
-  getParsedStatus(order: Order): any {
-    switch (order.orderData.status) {
-      // ACCEPTED
-      case 20:
-        return {
-          status,
-          text: 'ACCEPTED',
-          literal: 'ACEPTADO',
-          color: '#fddf7e',
-          spinner: true,
-          pickup: false,
-          markAsDelivered: false,
-        };
-      // IN PROGRESS
-      case 50:
-        return {
-          status,
-          text: 'IN PROGRESS',
-          literal: 'EN PREPARACIÓN',
-          color: '#fddf7e',
-          spinner: true,
-          pickup: false,
-          markAsDelivered: false,
-        };
-      // PREPARED
-      case 60:
-        return {
-          status,
-          text: 'IN PACKAGING',
-          literal: 'EN PACKAGING',
-          color: '#fddf7e',
-          spinner: true,
-          pickup: false,
-          markAsDelivered: false,
-        };
-      // READY FOR PICKUP
-      case 70:
-        return {
-          status,
-          text: 'READY FOR PICKUP',
-          literal: 'LISTO PARA RECOGER',
-          color: order.orderData.orderType === 2 ? '#67ebfa' : '#9bfbe1',
-          spinner: order.orderData.orderType === 2 ? true : false,
-          pickup: true,
-          markAsDelivered: false,
-        };
-      //IN DELIVERY
-      case 80:
-        return {
-          status,
-          text: 'IN DELIVERY',
-          literal: 'EN REPARTO',
-          color: '#fddf7e',
-          spinner: true,
-          pickup: false,
-          markAsDelivered: true,
-        };
-      // FINALIZED
-      case 90:
-        return {
-          status,
-          text: 'FINALIZADO',
-          literal: 'FINALIZADO',
-          color: '#9bfbe1',
-          spinner: false,
-          pickup: false,
-          markAsDelivered: false,
-        };
-    }
-    return {
-      status,
-      text: 'UNKNOWN',
-      literal: 'ESTADO DESCONOCIDO',
-      color: 'white',
-      spinner: false,
-      pickup: false,
-      markAsDelivered: false,
-    };
-  }
-
   isDelayed(order: Order): boolean {
-    if (
-      moment(order.orderData.pickupTimeUpdated, 'DD/MM HH:mm').isBefore(
-        moment()
-      ) &&
-      // If pickup time is passed and is in prearation or order is waiting to be delivered
-      (order.orderData.status === 20 ||
-        (order.orderData.status === 70 && order.orderData.orderType === 2))
-    ) {
-      return true;
+    const currentTimestamp = new Date().getTime();
+    if (order?.status?.status === Status.StatusEnum.IN_PROGRESS) {
+      return currentTimestamp > (order?.operation?.expectedReadyTs ?? 0) || false;
     }
+    if (order?.status?.status === Status.StatusEnum.IN_DELIVERY || order?.status?.status === Status.StatusEnum.READY) {
+      return currentTimestamp > (order?.operation?.expectedDeliveryTs ?? 0) || false;
+    } 
     return false;
   }
 
+  instantToDate(instant?: number): string {
+    return instant ? moment.unix(instant/1000).format('HH:mm') : '';
+  }
+
   markAsInDelivery(order: Order) {
-    this.updateOrderStatus(order.orderData.channelOrderDisplayId, 80);
+    this.updateOrderStatus(order?.id, Status.StatusEnum.IN_DELIVERY);
   }
 
   markAsDelivered(order: Order) {
-    this.updateOrderStatus(order.orderData.channelOrderDisplayId, 90);
+    this.updateOrderStatus(order?.id, Status.StatusEnum.DELIVERED);
   }
-  updateOrderStatus(orderId: string, status: number) {
-    this.ordersService.updateStatus(orderId, status).subscribe((orders) => {
-      this.getOrders();
-    });
+  updateOrderStatus(orderId?: string, status?: Status.StatusEnum) {
+    if (orderId) {
+      this.ordersApiService.ordersOrderIdPatch('', '', orderId, {status}).subscribe((orders) => {
+        this.getOrders();
+      });
+    }
+  }
+  recogerButtonVisible(order: Order): boolean {
+    return order.type === Order.TypeEnum.Delivery &&
+      (order.status?.status === Status.StatusEnum.READY || order.status?.status === Status.StatusEnum.PREPARED);
   }
 
+  entregarButtonVisible(order: Order): boolean {
+    return order.status?.status === Status.StatusEnum.IN_DELIVERY;
+  }
+  getBackgroundColorFromOrder(order: Order): object {
+    var background = '#fddf7e';
+    switch (order?.status?.status) {
+      case Status.StatusEnum.IN_PROGRESS:
+      case Status.StatusEnum.PENDING:
+      case Status.StatusEnum.IN_DELIVERY:
+        background = '#fddf7e';
+        break;
+      case Status.StatusEnum.PREPARED:
+      case Status.StatusEnum.READY:
+        background =
+          order.type === Order.TypeEnum.Delivery ? '#67ebfa' : '#9bfbe1';
+        break;
+      case Status.StatusEnum.DELIVERED:
+        background = '#9bfbe1';
+        break;
+    }
+    return { background };
+  }
   containsShakes(order: Order) {
-    return (
-      order.orderData.items.find((item) => item.name.includes('SHAKE')) != null
-    );
+    return order?.items?.find((item) => item?.name?.includes('SHAKE')) != null;
   }
 
   containsCakes(order: Order) {
-    return (
-      order.orderData.items.find((item) => item.name.includes('CAKE')) != null
-    );
+    return order?.items?.find((item) => item?.name?.includes('CAKE')) != null;
   }
 
   containsDrinks(order: Order) {
@@ -274,11 +157,11 @@ export class OrderslistComponent implements OnInit {
     ];
     var drinksRegex = new RegExp(drinks.join('|'));
     return (
-      order.orderData.items.find((item) => drinksRegex.test(item.name)) != null
+      order?.items?.find((item) => drinksRegex.test(item?.name || '')) != null
     );
   }
   openOrderDialogInfo(order: Order) {
-    var promise = new Promise((resolve, reject) => {
+    /*var promise = new Promise((resolve, reject) => {
       navigator.geolocation.getCurrentPosition((position) => {
         resolve(position);
       });
@@ -292,19 +175,11 @@ export class OrderslistComponent implements OnInit {
     dialogRef.afterClosed().subscribe(() => {
       console.log('The dialog was closed');
     });
-  }
-
-  getOrderIcon(ordr: Order): string {
-    return '../../assets/justeat_logo.png';
-    if (ordr.orderData.channel === 6) return '../../assets/glovo_logo.png';
-    if (ordr.orderData.channel === 9) return '../../assets/justeat_logo.png';
-    if (ordr.orderData.channel === 7) return '../../assets/uber_logo.png';
-    if (ordr.orderData.channel === 22)
-      return '../../assets/woocommerce_logo.png';
-    return '';
+    */
   }
 }
 
+/*
 @Component({
   selector: 'dialog-overview-example-dialog',
   styleUrls: ['./order.dialog.css'],
@@ -322,13 +197,16 @@ export class DialogOverviewExampleDialog {
     this.dialogRef.close();
   }
 
-  dateToString(date: string): string {
-    try {
-      return date.split(' ')[1];
-    } catch (ex) {
-      console.error(`Error parsing date: ${date}, exception: ${ex}`);
-      return '-';
-    }
+  callToCustomer(order: Order): void {
+    location.href = `tel:${order?.customer?.phoneNumber}`;
+  }
+
+  callToRider(order: Order): void {
+    location.href = `tel:${order?.rider?.phone}`;
+  }
+
+  dateToString(timestamp?: number): string {
+    return `date: ${timestamp}`
   }
 
   diffDates(date1: string, date2: string): number {
@@ -338,11 +216,19 @@ export class DialogOverviewExampleDialog {
     );
   }
 
-  callToCustomer(order: Order): void {
-    location.href = `tel:${order.orderData.customer.phoneNumber}`;
+  getDeliveredTime(order: Order): string {
+    return this.dateToString(
+      (order?.operation?.createdTs ?? 0) +
+        (order?.operation?.kitchenTime ?? 0) +
+        (order?.operation?.inDeliveryTime ?? 0)
+    );
   }
 
-  callToRider(order: Order): void {
-    location.href = `tel:${order.orderData.courier.phoneNumber}`;
+  getReadyTime(order: Order): string {
+    return this.dateToString(
+      (order?.operation?.createdTs ?? 0) +
+        (order?.operation?.kitchenTime ?? 0)
+    );
   }
 }
+*/

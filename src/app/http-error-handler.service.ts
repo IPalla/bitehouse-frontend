@@ -33,10 +33,13 @@ export class HttpErrorHandler {
 
       const message = (error.error instanceof ErrorEvent) ?
         error.error.message :
-       `server returned code ${error.status} with body "${error.error}"`;
+       `server returned code ${error.status} with body "${error.message}"`;
       if (error.status === 401){
         console.log(`Unauthorized, redirecting to login form`);
+        localStorage.removeItem('token');
         window.location.href = '/login';
+      } else {
+        alert(`${serviceName}: ${operation} failed: ${JSON.stringify(error.error.message)}`);
       }
       // TODO: better job of transforming error for user consumption
 
