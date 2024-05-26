@@ -21,7 +21,7 @@ export interface Operation {
     /**
      * Expected delivery timestamp. Usually 30 mins after order is created.
      */
-    expectedDeliveryTs?: number;
+    expectedDeliveredTs?: number;
     /**
      * Expected total order timestamp. Usually 15 mins after order is created, 30 mins for delivery orders.
      */

@@ -17,6 +17,7 @@ import { BarChartPickupComponent } from './pickup-screen/bar-chart-pickup/bar-ch
 import { DATE_PIPE_DEFAULT_OPTIONS } from "@angular/common";
 import { LoginComponent } from './login/login.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { OrderComponent } from './order/order.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     DeliveryAppComponent,
     KpisPickupComponent,
     BarChartPickupComponent,
-    LoginComponent
+    LoginComponent,
+    OrderComponent
   ],
   imports: [
     BrowserModule,

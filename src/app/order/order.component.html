@@ -1,0 +1,79 @@
+
+
+
+<mat-card [ngStyle]="getOrderStyle()">
+    <mat-card-header>
+      <mat-card-title>{{
+        order?.id
+      }}</mat-card-title>
+      <mat-card-subtitle>{{
+        (order?.amount || 100) / 100
+      }}</mat-card-subtitle>
+      <div class="end-chips">
+        <mat-chip [ngStyle]="{ background: 'white' }">{{
+          order?.status?.status
+        }}</mat-chip>
+        <mat-chip
+          [ngStyle]="{
+            background: isDelayed() ? 'red' : 'white'
+          }"
+        >
+          {{ instantToDate(order?.operation?.expectedReadyTs) }}
+        </mat-chip>
+        <mat-chip [ngStyle]="{ background: 'white' }">
+          {{ order?.type }}
+        </mat-chip>
+        <mat-chip
+          [ngStyle]="{ background: '#E9D502' }"
+          *ngIf="containsShakes()"
+        >
+          BATIDOS
+        </mat-chip>
+        <mat-chip
+          [ngStyle]="{ background: '#E9D502' }"
+          *ngIf="containsDrinks()"
+        >
+          BEBIDAS
+        </mat-chip>
+        <mat-chip
+          [ngStyle]="{ background: '#E9D502' }"
+          *ngIf="containsCakes()"
+        >
+          CAKES
+        </mat-chip>
+      </div>
+      <mat-card-subtitle>{{
+        order?.customer?.address
+      }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-actions align="end">
+      <button
+        (click)="markAsInDelivery()"
+        *ngIf="recogerButtonVisible()"
+        mat-button
+      >
+        RECOGER
+      </button>
+      <button
+        (click)="markAsDelivered()"
+        *ngIf="entregarButtonVisible()"
+        mat-button
+      >
+        ENTREGADO
+      </button>
+      <button
+        (click)="navigateToDirection()"
+        *ngIf="true"
+        mat-button
+      >
+        DIRECCIONES
+      </button>
+      <button  (click)="openOrderDialogInfo()" mat-button>INFO</button>
+    </mat-card-actions>
+    <mat-card-footer>
+      <mat-progress-bar
+        *ngIf="!hideSpinner()"
+        mode="indeterminate"
+      ></mat-progress-bar>
+    </mat-card-footer>
+  </mat-card>
