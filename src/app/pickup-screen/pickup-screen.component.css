@@ -16,11 +16,6 @@ body {
   overflow: hidden;
 }
 
-app-kpis {
-  width: 100%;
-  margin-top: 10px
-}
-
 .pedidos {
   width: 55%;
 }

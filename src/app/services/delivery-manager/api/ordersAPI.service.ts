@@ -20,7 +20,7 @@ import {
 } from '@angular/common/http';
 import { CustomHttpUrlEncodingCodec } from '../encoder';
 
-import { catchError, Observable } from 'rxjs';
+import { catchError, Observable, timer } from 'rxjs';
 
 import { Order } from '../model/order';
 import { StatusUpdate } from '../model/statusUpdate';
@@ -43,17 +43,28 @@ export class OrdersAPIService {
     'https://delivery-manager.bitehouseburger.es/delivery-manager';
   public defaultHeaders = new HttpHeaders();
   public configuration = new Configuration();
+  private everyFiveSeconds: Observable<number> = timer(0, 5000);
   errorHandler: HandleError;
-  notificationsObservable: Observable<OrderNotification> | undefined =
-    undefined;
+  notificationsObservable: Observable<OrderNotification> = new Observable(
+    (observer) => {
+      this.observer = observer;
+    },
+  );
+  observer: any;
+  eventSource: EventSource | undefined = undefined;
 
   constructor(
     protected httpClient: HttpClient,
     private authApiService: AuthAPIService,
-    httpErrorHandler: HttpErrorHandler
+    httpErrorHandler: HttpErrorHandler,
   ) {
+    console.log(`Orders api service initialized`);
     this.basePath = environment?.deliveryManagerUrl || this.basePath;
     this.errorHandler = httpErrorHandler.createHandleError('OrdersAPIService');
+    this.connectToNotifications();
+    this.everyFiveSeconds.subscribe(() => {
+      this.connectToNotifications();
+    });
   }
 
   /**
@@ -84,35 +95,35 @@ export class OrdersAPIService {
     startDate?: string,
     endDate?: string,
     observe?: 'body',
-    reportProgress?: boolean
+    reportProgress?: boolean,
   ): Observable<Order[]>;
   public ordersGet(
     orderType?: string[],
     startDate?: string,
     endDate?: string,
     observe?: 'response',
-    reportProgress?: boolean
+    reportProgress?: boolean,
   ): Observable<HttpResponse<Order[]>>;
   public ordersGet(
     orderType?: string[],
     startDate?: string,
     endDate?: string,
     observe?: 'events',
-    reportProgress?: boolean
+    reportProgress?: boolean,
   ): Observable<HttpEvent<Order[]>>;
   public ordersGet(
     orderType?: string[],
     startDate?: string,
     endDate?: string,
     observe: any = 'body',
-    reportProgress: boolean = false
+    reportProgress: boolean = false,
   ): Observable<any> {
     let queryParameters = new HttpParams({
       encoder: new CustomHttpUrlEncodingCodec(),
     });
     if (orderType !== undefined && orderType !== null && orderType.length > 0) {
       orderType.forEach((type) => {
-        queryParameters = queryParameters.set('order_type', <any>type);
+        queryParameters = queryParameters.append('order_type', <any>type);
       });
     }
     if (startDate !== undefined && startDate !== null) {
@@ -157,35 +168,35 @@ export class OrdersAPIService {
     orderId: string,
     authorizationHeader: string,
     observe?: 'body',
-    reportProgress?: boolean
+    reportProgress?: boolean,
   ): Observable<Order>;
   public ordersOrderIdGet(
     orderId: string,
     authorizationHeader: string,
     observe?: 'response',
-    reportProgress?: boolean
+    reportProgress?: boolean,
   ): Observable<HttpResponse<Order>>;
   public ordersOrderIdGet(
     orderId: string,
     authorizationHeader: string,
     observe?: 'events',
-    reportProgress?: boolean
+    reportProgress?: boolean,
   ): Observable<HttpEvent<Order>>;
   public ordersOrderIdGet(
     orderId: string,
     authorizationHeader: string,
     observe: any = 'body',
-    reportProgress: boolean = false
+    reportProgress: boolean = false,
   ): Observable<any> {
     if (orderId === null || orderId === undefined) {
       throw new Error(
-        'Required parameter orderId was null or undefined when calling ordersOrderIdGet.'
+        'Required parameter orderId was null or undefined when calling ordersOrderIdGet.',
       );
     }
 
     if (authorizationHeader === null || authorizationHeader === undefined) {
       throw new Error(
-        'Required parameter authorizationHeader was null or undefined when calling ordersOrderIdGet.'
+        'Required parameter authorizationHeader was null or undefined when calling ordersOrderIdGet.',
       );
     }
 
@@ -193,7 +204,7 @@ export class OrdersAPIService {
     if (authorizationHeader !== undefined && authorizationHeader !== null) {
       headers = headers.set(
         'authorization_header',
-        String(authorizationHeader)
+        String(authorizationHeader),
       );
     }
 
@@ -217,7 +228,7 @@ export class OrdersAPIService {
           headers: headers,
           observe: observe,
           reportProgress: reportProgress,
-        }
+        },
       )
       .pipe(catchError(this.errorHandler('ordersGet')));
   }
@@ -238,7 +249,7 @@ export class OrdersAPIService {
     orderId?: string,
     body?: StatusUpdate,
     observe?: 'body',
-    reportProgress?: boolean
+    reportProgress?: boolean,
   ): Observable<any>;
   public ordersOrderIdPatch(
     xUserLatitude?: number,
@@ -246,7 +257,7 @@ export class OrdersAPIService {
     orderId?: string,
     body?: StatusUpdate,
     observe?: 'response',
-    reportProgress?: boolean
+    reportProgress?: boolean,
   ): Observable<HttpResponse<any>>;
   public ordersOrderIdPatch(
     xUserLatitude?: number,
@@ -254,7 +265,7 @@ export class OrdersAPIService {
     orderId?: string,
     body?: StatusUpdate,
     observe?: 'events',
-    reportProgress?: boolean
+    reportProgress?: boolean,
   ): Observable<HttpEvent<any>>;
   public ordersOrderIdPatch(
     xUserLatitude?: number,
@@ -262,11 +273,11 @@ export class OrdersAPIService {
     orderId?: string,
     body?: StatusUpdate,
     observe: any = 'body',
-    reportProgress: boolean = false
+    reportProgress: boolean = false,
   ): Observable<any> {
     if (orderId === null || orderId === undefined) {
       throw new Error(
-        'Required parameter orderId was null or undefined when calling ordersOrderIdPatch.'
+        'Required parameter orderId was null or undefined when calling ordersOrderIdPatch.',
       );
     }
     let headers = this.defaultHeaders;
@@ -307,26 +318,30 @@ export class OrdersAPIService {
           headers: headers,
           observe: observe,
           reportProgress: reportProgress,
-        }
+        },
       )
       .pipe(catchError(this.errorHandler('ordersPatch')));
   }
 
   public getOrdersNotifications(): Observable<OrderNotification> {
-    if (this.notificationsObservable) {
-      return this.notificationsObservable;
-    }
-    this.notificationsObservable = new Observable((observer) => {
-      const eventSource = new EventSource(
-        `${this.basePath}/orders/notifications/subscribe`
-      );
-      eventSource.onmessage = (event) =>
-        observer.next(JSON.parse(event.data) as OrderNotification);
-      eventSource.onerror = (error) => observer.error(error);
-      return () => {
-        eventSource.close();
-      };
-    });
     return this.notificationsObservable;
+  }
+
+  public connectToNotifications(): void {
+    console.log(`Notifications health check`);
+    if (this.eventSource && this.eventSource.readyState === 1) {
+      console.log(`UP`);
+      return;
+    }
+    console.log(`Creating new event source`);
+    this.eventSource = new EventSource(
+      `${this.basePath}/orders/notifications/subscribe`,
+    );
+    this.eventSource.onmessage = (event) =>
+      this.observer.next(JSON.parse(event.data) as OrderNotification);
+    this.eventSource.onerror = (error) => {
+      this?.eventSource?.close();
+      this.eventSource = undefined;
+    };
   }
 }

@@ -6,7 +6,7 @@
       <mat-card-title>{{
         order?.id
       }}</mat-card-title>
-      <mat-card-subtitle>{{
+      <mat-card-subtitle *ngIf="!pickupScreen">{{
         (order?.amount || 100) / 100
       }}</mat-card-subtitle>
       <div class="end-chips">
@@ -20,26 +20,28 @@
         >
           {{ instantToDate(order?.operation?.expectedReadyTs) }}
         </mat-chip>
-        <mat-chip [ngStyle]="{ background: 'white' }">
+        <mat-chip *ngIf="!pickupScreen" [ngStyle]="{ background: 'white' }">
           {{ order?.type }}
         </mat-chip>
-        <mat-chip
+        <mat-chip *ngIf="!pickupScreen && containsShakes()"
           [ngStyle]="{ background: '#E9D502' }"
-          *ngIf="containsShakes()"
         >
           BATIDOS
         </mat-chip>
-        <mat-chip
+        <mat-chip *ngIf="!pickupScreen && containsDrinks()"
           [ngStyle]="{ background: '#E9D502' }"
-          *ngIf="containsDrinks()"
         >
           BEBIDAS
         </mat-chip>
-        <mat-chip
+        <mat-chip *ngIf="!pickupScreen && containsCakes()"
           [ngStyle]="{ background: '#E9D502' }"
-          *ngIf="containsCakes()"
         >
           CAKES
+        </mat-chip>
+        <mat-chip *ngIf="order?.scheduled"
+          [ngStyle]="{ background: '#E9D502' }"
+        >
+          PROGRAMADO
         </mat-chip>
       </div>
       <mat-card-subtitle>{{
@@ -47,28 +49,25 @@
       }}</mat-card-subtitle>
     </mat-card-header>
     <mat-card-actions align="end">
-      <button
+      <button *ngIf="!pickupScreen && recogerButtonVisible()"
         (click)="markAsInDelivery()"
-        *ngIf="recogerButtonVisible()"
         mat-button
       >
         RECOGER
       </button>
-      <button
+      <button *ngIf="!pickupScreen && entregarButtonVisible()"
         (click)="markAsDelivered()"
-        *ngIf="entregarButtonVisible()"
         mat-button
       >
         ENTREGADO
       </button>
-      <button
+      <button *ngIf="!pickupScreen"
         (click)="navigateToDirection()"
-        *ngIf="true"
         mat-button
       >
         DIRECCIONES
       </button>
-      <button  (click)="openOrderDialogInfo()" mat-button>INFO</button>
+      <button  *ngIf="!pickupScreen" (click)="openOrderDialogInfo(order)" mat-button>INFO</button>
     </mat-card-actions>
     <mat-card-footer>
       <mat-progress-bar

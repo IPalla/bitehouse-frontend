@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { Order, OrdersAPIService, Status } from '../services/delivery-manager';
 import * as moment from 'moment';
 import { MatDialog } from '@angular/material/dialog';
@@ -10,22 +10,30 @@ import { OrderDialogComponent } from '../order-dialog/order-dialog.component';
   styleUrls: ['./order.component.css'],
 })
 export class OrderComponent {
+  @Input() pickupScreen: boolean = false;
   @Input() order: Order | undefined;
   @Input() getOrders: () => void = () => {};
   @Input() ordersApiService: OrdersAPIService | undefined;
+  @Input() changeDetector: ChangeDetectorRef | undefined;
   public saveInProgress: boolean = false;
 
   constructor(public dialog: MatDialog) {
     this.saveInProgress = false;
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.openOrderDialogInfo.bind(this);
+  }
+
+  ngOnChanges(): void {
+    this.openOrderDialogInfo.bind(this);
+  }
 
   navigateToDirection(): void {
     const address = this.order?.customer?.address || '';
     window.open(
       `https://www.google.com/maps/search/?api=1&query=${encodeURI(address)}`,
-      '_blank'
+      '_blank',
     );
   }
 
@@ -36,7 +44,8 @@ export class OrderComponent {
       this.order?.status?.status === Status.StatusEnum.PENDING
     ) {
       return (
-        currentTimestamp > (this.order?.operation?.expectedReadyTs ?? 0) || false
+        currentTimestamp > (this.order?.operation?.expectedReadyTs ?? 0) ||
+        false
       );
     }
     if (
@@ -44,7 +53,8 @@ export class OrderComponent {
       this.order?.status?.status === Status.StatusEnum.READY
     ) {
       return (
-        currentTimestamp > (this.order?.operation?.expectedDeliveredTs ?? 0) || false
+        currentTimestamp > (this.order?.operation?.expectedDeliveredTs ?? 0) ||
+        false
       );
     }
     return false;
@@ -63,19 +73,26 @@ export class OrderComponent {
   }
 
   updateOrderStatus(orderId?: string, status?: Status.StatusEnum) {
-    if (!orderId){
+    if (!orderId) {
       return;
     }
     this.saveInProgress = true;
-    var promise: Promise<GeolocationPosition> = new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition((position) => {
-        console.log(`Geo position acquired: ${JSON.stringify(position)}`);
-        resolve(position);
-      });
-    });
+    var promise: Promise<GeolocationPosition> = new Promise(
+      (resolve, reject) => {
+        navigator.geolocation.getCurrentPosition((position) => {
+          console.log(`Geo position acquired: ${JSON.stringify(position)}`);
+          resolve(position);
+        });
+      },
+    );
     promise.then((position: GeolocationPosition) => {
       this?.ordersApiService
-        ?.ordersOrderIdPatch(position?.coords?.latitude, position?.coords?.longitude, orderId, { status })
+        ?.ordersOrderIdPatch(
+          position?.coords?.latitude,
+          position?.coords?.longitude,
+          orderId,
+          { status },
+        )
         .subscribe((response) => {
           this.saveInProgress = false;
           this.getOrders();
@@ -114,16 +131,20 @@ export class OrderComponent {
     if (this.saveInProgress)
       return {
         'pointer-events': 'none',
-        'background': 'white'
+        background: 'white',
       };
     return { background };
   }
   containsShakes() {
-    return this.order?.items?.find((item) => item?.name?.includes('SHAKE')) != null;
+    return (
+      this.order?.items?.find((item) => item?.name?.includes('SHAKE')) != null
+    );
   }
 
   containsCakes() {
-    return this.order?.items?.find((item) => item?.name?.includes('CAKE')) != null;
+    return (
+      this.order?.items?.find((item) => item?.name?.includes('CAKE')) != null
+    );
   }
 
   containsDrinks() {
@@ -137,12 +158,13 @@ export class OrderComponent {
     ];
     var drinksRegex = new RegExp(drinks.join('|'));
     return (
-      this.order?.items?.find((item) => drinksRegex.test(item?.name || '')) != null
+      this.order?.items?.find((item) => drinksRegex.test(item?.name || '')) !=
+      null
     );
   }
 
   hideSpinner(): boolean {
-    if (this.saveInProgress){
+    if (this.saveInProgress) {
       return false;
     }
     return (
@@ -153,14 +175,16 @@ export class OrderComponent {
     );
   }
 
-  openOrderDialogInfo() {
-    const dialogRef = this.dialog.open(OrderDialogComponent, {
-      width: '250px',
-      data: this.order,
-    });
+  openOrderDialogInfo(order: Order | undefined) {
+    if (this.order) {
+      var dialogRef = this.dialog.open(OrderDialogComponent, {
+        width: '250px',
+        data: { order: this.order },
+      });
 
-    dialogRef.afterClosed().subscribe(() => {
-      console.log('The dialog was closed');
-    });
+      dialogRef.afterClosed().subscribe(() => {
+        console.log('The dialog was closed');
+      });
+    }
   }
 }

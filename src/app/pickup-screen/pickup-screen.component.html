@@ -1,8 +1,9 @@
 <div class="content" role="main">
-  <app-kpis-pickup></app-kpis-pickup>
+  <app-kpis [pickupScreen]="true"></app-kpis>
     <div class="pedidos">
       <h1>PEDIDOS</h1>
-      <app-bar-chart-pickup></app-bar-chart-pickup>
+      <!--<app-bar-chart-pickup></app-bar-chart-pickup>-->
+      <app-orderslist [pickupScreen]="true"></app-orderslist>
     </div>
 </div>
 
@@ -26,13 +27,3 @@
       alt="QR Code">
   </div>
 </div>
-<!--
-   src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://bitehouseburger.es/order-type-selection/"
-<div class="instagram-container">
-  <h2>SÍGUENOS</h2>
-  <div class="instagram-div">
-    <img src="../../assets/instagram-logo.png"
-      alt="QR Code">
-  </div>
-</div>
--->

@@ -8,9 +8,8 @@ describe('PickupScreenComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PickupScreenComponent ]
-    })
-    .compileComponents();
+      declarations: [PickupScreenComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(PickupScreenComponent);
     component = fixture.componentInstance;

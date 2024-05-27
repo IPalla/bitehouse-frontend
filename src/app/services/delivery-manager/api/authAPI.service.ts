@@ -67,22 +67,22 @@ export class AuthAPIService {
   public authPost(
     body?: Auth,
     observe?: 'body',
-    reportProgress?: boolean
+    reportProgress?: boolean,
   ): Observable<boolean>;
   public authPost(
     body?: Auth,
     observe?: 'response',
-    reportProgress?: boolean
+    reportProgress?: boolean,
   ): Observable<boolean>;
   public authPost(
     body?: Auth,
     observe?: 'events',
-    reportProgress?: boolean
+    reportProgress?: boolean,
   ): Observable<boolean>;
   public authPost(
     body?: Auth,
     observe: any = 'body',
-    reportProgress: boolean = false
+    reportProgress: boolean = false,
   ): Observable<boolean> {
     let headers = this.defaultHeaders;
 
@@ -118,7 +118,7 @@ export class AuthAPIService {
             return of(false);
           }
           return of(false);
-        })
+        }),
       );
   }
 

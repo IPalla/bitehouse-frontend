@@ -1,6 +1,6 @@
-import { Order } from "./order";
+import { Order } from './order';
 
-export interface OrderNotification { 
-    events?: string[];
-    order?: Order;
+export interface OrderNotification {
+  events?: string[];
+  order?: Order;
 }

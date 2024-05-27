@@ -1,6 +1,8 @@
 <div *ngFor="let order of orders; index as i">
   <app-order
+  [pickupScreen]="pickupScreen"
   [order]="order"
-  [getOrders]="this.getOrders.bind(this)"
-  [ordersApiService]="this.ordersApiService"></app-order>
+  [getOrders]="this.getOrders"
+  [ordersApiService]="this.ordersApiService"
+  [changeDetector]="this.changeDetector"></app-order>
 </div>

@@ -1,43 +1,78 @@
 <div>
     <div class="flex_response kpi">
         <div class="metric_box">
-            <div>
+            <div class="kpi-value-container">
                 <span class="kpi-value">{{ kpis.finishedOrders }}</span>
             </div>
             <div>
-                <p class="kpi-title">Finalizados</p>
+                <p class="kpi-title">Pedidos finalizados</p>
             </div>
         </div>
         <div class="metric_box">
-            <div>
+            <div class="kpi-value-container">
                 <span class="kpi-value">{{ kpis.inPreparationOrders }}</span>
             </div>
             <div>
-                <p class="kpi-title">En preparación</p>
+                <p class="kpi-title">Pedidos en preparación</p>
             </div>
         </div>
-        <div class="metric_box">
-            <div>
+        <div class="metric_box" *ngIf="!pickupScreen">
+            <div class="kpi-value-container">
                 <span class="kpi-value">{{ kpis.awaitingOrders }}</span>
             </div>
             <div>
                 <p class="kpi-title">Esperando</p>
             </div>
         </div>
-        <div class="metric_box">
-            <div>
+        <div class="metric_box" *ngIf="!pickupScreen">
+            <div class="kpi-value-container">
                 <span class="kpi-value">{{ kpis.inDeliveryOrders }}</span>
             </div>
             <div>
                 <p class="kpi-title">En reparto</p>
             </div>
         </div>
-        <div class="metric_box">
-            <div>
-                <span class="kpi-value">{{ kpis.averageEndToEndTime }}</span>
+        <div class="metric_box" *ngIf="!pickupScreen">
+            <div class="kpi-value-container">
+                <span class="kpi-value">{{ millisToMinutes(kpis.averageEndToEndTime) }}</span>
             </div>
             <div>
                 <p class="kpi-title">Tiempo medio de entrega</p>
+            </div>
+        </div>
+        <div class="metric_box" *ngIf="pickupScreen">
+            <div class="kpi-value-container">
+                <span class="kpi-value">{{ millisToMinutes(kpis.averagePreparationTime) }}</span>
+            </div>
+            <div>
+                <p class="kpi-title">Tiempo medio de preparación</p>
+            </div>
+        </div>
+        <div class="metric_box" *ngIf="pickupScreen">
+            <div>
+                <img height="120px" src="{{topBurgers[0].src}}">
+            </div>
+            <div>
+                <mat-icon style="color: gold;">workspace_premium</mat-icon><span class="prduct-quantity">{{topBurgers[0].quantity}}</span>
+                <p class="kpi-title">{{topBurgers[0].productName}}</p>
+            </div>
+        </div>
+        <div class="metric_box" *ngIf="pickupScreen">
+            <div>
+                <img height="120px" src="{{topBurgers[1].src}}">
+            </div>
+            <div>
+                <mat-icon style="color: silver;">workspace_premium</mat-icon><span class="prduct-quantity">{{topBurgers[1].quantity}}</span>
+                <p class="kpi-title">{{topBurgers[1].productName}}</p>
+            </div>
+        </div>
+        <div class="metric_box" *ngIf="pickupScreen">
+            <div>
+                <img height="120px" src="{{topBurgers[2].src}}">
+            </div>
+            <div>
+                <mat-icon style="color: goldenrod;">workspace_premium</mat-icon><span class="prduct-quantity">{{topBurgers[2].quantity}}</span>
+                <p class="kpi-title">{{topBurgers[2].productName}}</p>
             </div>
         </div>
     </div>

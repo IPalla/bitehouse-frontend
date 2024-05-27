@@ -9,15 +9,14 @@ import { HttpClientModule } from '@angular/common/http';
 import { KpisComponent } from './kpis/kpis.component';
 import { HttpErrorHandler } from './http-error-handler.service';
 import { OrderslistComponent } from './orderslist/orderslist.component';
-import {MaterialExampleModule} from './material.module';
+import { MaterialExampleModule } from './material.module';
 import { PickupScreenComponent } from './pickup-screen/pickup-screen.component';
 import { DeliveryAppComponent } from './delivery-app/delivery-app.component';
-import { KpisPickupComponent } from './pickup-screen/kpis-pickup/kpis-pickup.component';
-import { BarChartPickupComponent } from './pickup-screen/bar-chart-pickup/bar-chart-pickup.component';
-import { DATE_PIPE_DEFAULT_OPTIONS } from "@angular/common";
+import { DATE_PIPE_DEFAULT_OPTIONS } from '@angular/common';
 import { LoginComponent } from './login/login.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OrderComponent } from './order/order.component';
+import { OrdersAPIService } from './services/delivery-manager';
 
 @NgModule({
   declarations: [
@@ -26,10 +25,8 @@ import { OrderComponent } from './order/order.component';
     OrderslistComponent,
     PickupScreenComponent,
     DeliveryAppComponent,
-    KpisPickupComponent,
-    BarChartPickupComponent,
     LoginComponent,
-    OrderComponent
+    OrderComponent,
   ],
   imports: [
     BrowserModule,
@@ -39,15 +36,16 @@ import { OrderComponent } from './order/order.component';
     HttpClientModule,
     MaterialExampleModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
   ],
   providers: [
+    OrdersAPIService,
     HttpErrorHandler,
     {
       provide: DATE_PIPE_DEFAULT_OPTIONS,
-      useValue: { dateFormat: "longDate" }
-    }
+      useValue: { dateFormat: 'longDate' },
+    },
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
