@@ -61,7 +61,7 @@
       >
         ENTREGADO
       </button>
-      <button *ngIf="!pickupScreen"
+      <button *ngIf="!pickupScreen && isDelivery()"
         (click)="navigateToDirection()"
         mat-button
       >

@@ -15,3 +15,10 @@ docker run -dp 8080:8080 bitehouse-frontend
 
 
 //docker image rm bitehouse-frontend --force
+
+
+gcloud auth login --no-launch-browser
+gcloud auth configure-docker europe-north1-docker.pkg.dev
+
+docker build . --no-cache --tag europe-north1-docker.pkg.dev/bite-house-burger/bhb-repository/bitehouse-frontend:latest
+docker push europe-north1-docker.pkg.dev/bite-house-burger/bhb-repository/bitehouse-frontend:latest

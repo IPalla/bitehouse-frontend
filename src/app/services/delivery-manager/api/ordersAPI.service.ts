@@ -343,5 +343,9 @@ export class OrdersAPIService {
       this?.eventSource?.close();
       this.eventSource = undefined;
     };
+    this.observer?.next({
+      order: {},
+      events: ['reconnected'],
+    } as OrderNotification);
   }
 }

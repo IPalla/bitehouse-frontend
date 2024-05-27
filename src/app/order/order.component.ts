@@ -108,6 +108,10 @@ export class OrderComponent {
     );
   }
 
+  isDelivery(): boolean {
+    return this.order?.type === Order.TypeEnum.Delivery;
+  }
+
   entregarButtonVisible(): boolean {
     return this.order?.status?.status === Status.StatusEnum.IN_DELIVERY;
   }
@@ -170,7 +174,7 @@ export class OrderComponent {
     return (
       this.order?.status?.status === Status.StatusEnum.DELIVERED ||
       ((this.order?.status?.status === Status.StatusEnum.PREPARED ||
-        this.order?.status?.status === Status.StatusEnum.PREPARED) &&
+        this.order?.status?.status === Status.StatusEnum.READY) &&
         this.order?.type !== Order.TypeEnum.Delivery)
     );
   }
