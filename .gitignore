@@ -4,6 +4,8 @@
 /tmp
 /out-tsc
 /bazel-out
+nginx-hosting/dist
+nginx-hosting/dist/*
 
 # Node
 /node_modules
