@@ -1,7 +1,3 @@
-gcloud auth login --no-launch-browser
-gcloud auth configure-docker europe-north1-docker.pkg.dev
-
-
 docker image rm europe-north1-docker.pkg.dev/bite-house-burger/bhb-repository/bitehouse-frontend:latest --force
 ng build --configuration=development
 rm -r nginx-hosting/dist
@@ -9,5 +5,4 @@ mv dist nginx-hosting
 cd nginx-hosting
 
 docker build . --no-cache --tag europe-north1-docker.pkg.dev/bite-house-burger/bhb-repository/bitehouse-frontend:latest
-docker run -dp 8080:8080 europe-north1-docker.pkg.dev/bite-house-burger/bhb-repository/bitehouse-frontend:latest
 docker push europe-north1-docker.pkg.dev/bite-house-burger/bhb-repository/bitehouse-frontend:latest

@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment-timezone';
 import { MatDialog } from '@angular/material/dialog';
-import { Order, OrdersAPIService } from '../services/delivery-manager';
+import { Order, OrdersAPIService, Status } from '../services/delivery-manager';
 import { OrderNotification } from '../services/delivery-manager/model/orderNotification';
 
 @Component({
@@ -108,6 +108,11 @@ export class OrderslistComponent implements OnInit {
               ordr1.operation?.expectedReadyTs! -
               ordr2.operation?.expectedReadyTs!
             );
+          });
+        }
+        if (this.ridersScreen) {
+          orders = orders.filter((order) => {
+            order.status?.status !== Status.StatusEnum.DELIVERED;
           });
         }
         this.orders = [...orders];

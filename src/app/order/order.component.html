@@ -13,7 +13,7 @@
         <mat-chip [ngStyle]="{ background: 'white' }">{{
           order?.status?.status
         }}</mat-chip>
-        <mat-chip
+        <mat-chip *ngIf="!pickupScreen"
           [ngStyle]="{
             background: isDelayed() ? 'red' : 'white'
           }"
@@ -38,7 +38,7 @@
         >
           CAKES
         </mat-chip>
-        <mat-chip *ngIf="order?.scheduled"
+        <mat-chip *ngIf="order?.scheduled && !pickupScreen"
           [ngStyle]="{ background: '#E9D502' }"
         >
           PROGRAMADO
