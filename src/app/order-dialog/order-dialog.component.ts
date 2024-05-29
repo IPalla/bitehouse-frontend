@@ -30,7 +30,7 @@ export class OrderDialogComponent implements OnInit {
   }
 
   callToCustomer(): void {
-    location.href = `tel:${this.order?.customer?.phoneNumber}`;
+    location.href = `tel:${this.order?.customer?.phone_number}`;
   }
 
   callToRider(): void {

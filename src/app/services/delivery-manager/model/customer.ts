@@ -29,7 +29,7 @@ export interface Customer {
   /**
    * Customer phone
    */
-  phoneNumber?: string;
+  phone_number?: string;
   /**
    * Customer address
    */
