@@ -43,6 +43,9 @@
         >
           PROGRAMADO
         </mat-chip>
+        <mat-chip *ngIf="!pickupScreen && isDelivery() && order?.rider?.name" [ngStyle]="{ background: 'white' }">
+          {{ order?.rider?.name }}
+        </mat-chip>
       </div>
       <mat-card-subtitle>{{
         order?.customer?.address

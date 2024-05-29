@@ -50,7 +50,7 @@ export class OrderComponent {
     }
     if (
       this.order?.status?.status === Status.StatusEnum.IN_DELIVERY ||
-      this.order?.status?.status === Status.StatusEnum.READY
+      (this.order?.status?.status === Status.StatusEnum.READY && this.order?.type === Order.TypeEnum.Delivery)
     ) {
       return (
         currentTimestamp > (this.order?.operation?.expectedDeliveredTs ?? 0) ||
