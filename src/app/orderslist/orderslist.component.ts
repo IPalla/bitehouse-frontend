@@ -95,7 +95,7 @@ export class OrderslistComponent implements OnInit {
       )
       .subscribe((orders) => {
         console.log(`Orders retrieved successfully`);
-        if (this.ridersScreen || this.pickupScreen) {
+        if (this.ridersScreen || this.pickupScreen || this.kitchenScreen) {
           orders.sort((ordr1, ordr2) => {
             return (
               ordr2.operation?.expectedReadyTs! -
