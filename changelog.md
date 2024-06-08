@@ -9,3 +9,6 @@
 
 - Fix riders screen filter
 
+### 2.0.2
+
+- Fix kitchen screen sorting
