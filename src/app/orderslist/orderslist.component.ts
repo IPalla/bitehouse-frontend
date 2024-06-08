@@ -110,10 +110,11 @@ export class OrderslistComponent implements OnInit {
             );
           });
         }
+        
         if (this.ridersScreen) {
-          orders = orders.filter((order) => {
-            order.status?.status !== Status.StatusEnum.DELIVERED;
-          });
+          orders = orders.filter((order) =>
+            order.status?.status !== Status.StatusEnum.DELIVERED
+          );
         }
         this.orders = [...orders];
         this.changeDetector?.detectChanges();
