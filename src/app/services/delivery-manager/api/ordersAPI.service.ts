@@ -61,10 +61,6 @@ export class OrdersAPIService {
     console.log(`Orders api service initialized`);
     this.basePath = environment?.deliveryManagerUrl || this.basePath;
     this.errorHandler = httpErrorHandler.createHandleError('OrdersAPIService');
-    this.connectToNotifications();
-    this.everyFiveSeconds.subscribe(() => {
-      this.connectToNotifications();
-    });
   }
 
   /**
@@ -166,25 +162,21 @@ export class OrdersAPIService {
    */
   public ordersOrderIdGet(
     orderId: string,
-    authorizationHeader: string,
     observe?: 'body',
     reportProgress?: boolean,
   ): Observable<Order>;
   public ordersOrderIdGet(
     orderId: string,
-    authorizationHeader: string,
     observe?: 'response',
     reportProgress?: boolean,
   ): Observable<HttpResponse<Order>>;
   public ordersOrderIdGet(
     orderId: string,
-    authorizationHeader: string,
     observe?: 'events',
     reportProgress?: boolean,
   ): Observable<HttpEvent<Order>>;
   public ordersOrderIdGet(
     orderId: string,
-    authorizationHeader: string,
     observe: any = 'body',
     reportProgress: boolean = false,
   ): Observable<any> {
@@ -194,19 +186,7 @@ export class OrdersAPIService {
       );
     }
 
-    if (authorizationHeader === null || authorizationHeader === undefined) {
-      throw new Error(
-        'Required parameter authorizationHeader was null or undefined when calling ordersOrderIdGet.',
-      );
-    }
-
     let headers = this.defaultHeaders;
-    if (authorizationHeader !== undefined && authorizationHeader !== null) {
-      headers = headers.set(
-        'authorization_header',
-        String(authorizationHeader),
-      );
-    }
 
     // to determine the Accept header
     let httpHeaderAccepts: string[] = ['application/json'];

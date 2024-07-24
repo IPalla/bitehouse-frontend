@@ -1,0 +1,19 @@
+.content {
+  display: flex;
+  max-width: 100%;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  padding-bottom: 0px;
+  background-color: white;
+}
+
+body {
+  height: calc(100vh - 120px);
+  max-height: calc(100vh - 120px);
+  overflow: hidden;
+}
+
+.mat-step-header {
+  justify-content: center;
+}
