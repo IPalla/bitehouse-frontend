@@ -15,6 +15,7 @@ export class OrderslistComponent implements OnInit {
   ridersScreen: boolean = false;
   @Input() pickupScreen: boolean = false;
   kitchenScreen: boolean = false;
+  playing: boolean = false;
   constructor(
     private route: ActivatedRoute,
     public dialog: MatDialog,
@@ -40,7 +41,7 @@ export class OrderslistComponent implements OnInit {
     this.ordersApiService.getOrdersNotifications().subscribe(
       (data: OrderNotification) => {
         console.log(
-          `Orders notifications received: ${data.order?.id} - ${JSON.stringify(
+          `Orders notifications received: ${new Date()} ${data.order?.id} - ${JSON.stringify(
             data.events,
           )}`,
         );
@@ -67,11 +68,23 @@ export class OrderslistComponent implements OnInit {
   }
 
   playReadyAudio(order: Order) {
-    console.log(`Playing audio for order ${order.id}`);
+    console.log(`Play ready audio for order ${order.id}`);
+    if (this.playing === true) {
+      console.log(`Audio already playing, waiting 5 seconds to play`);
+      setTimeout(() => {
+        this.playReadyAudio(order);
+      }, 5000);
+      return;
+    }
     const audio = new Audio(
       `https://whatsapp-trigger-j5lrm5ud3q-lm.a.run.app/orders/${order.id}/audio`,
     );
+    this.playing = true;
     audio.play();
+    audio.onended = () => {
+      console.log(`Audio ended`);
+      this.playing = false;
+    };
   }
 
   getOrders(): void {

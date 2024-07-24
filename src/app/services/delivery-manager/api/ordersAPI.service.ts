@@ -20,7 +20,7 @@ import {
 } from '@angular/common/http';
 import { CustomHttpUrlEncodingCodec } from '../encoder';
 
-import { catchError, Observable, timer } from 'rxjs';
+import { catchError, Observable, of, timer } from 'rxjs';
 
 import { Order } from '../model/order';
 import { StatusUpdate } from '../model/statusUpdate';
@@ -43,13 +43,7 @@ export class OrdersAPIService {
     'https://delivery-manager.bitehouseburger.es/delivery-manager';
   public defaultHeaders = new HttpHeaders();
   public configuration = new Configuration();
-  private everyFiveSeconds: Observable<number> = timer(0, 5000);
   errorHandler: HandleError;
-  notificationsObservable: Observable<OrderNotification> = new Observable(
-    (observer) => {
-      this.observer = observer;
-    },
-  );
   observer: any;
   eventSource: EventSource | undefined = undefined;
 
@@ -210,7 +204,16 @@ export class OrdersAPIService {
           reportProgress: reportProgress,
         },
       )
-      .pipe(catchError(this.errorHandler('ordersGet')));
+      .pipe(
+        catchError(error => {
+          // Log the error if needed
+          console.error('Error fetching order:', error);
+
+          // Return an empty order object
+          const emptyOrder: Order = {}; // Adjust this to match the Order interface
+          return of(emptyOrder);
+        })
+      );
   }
 
   /**
@@ -304,11 +307,21 @@ export class OrdersAPIService {
   }
 
   public getOrdersNotifications(): Observable<OrderNotification> {
-    return this.notificationsObservable;
+    this.connectToNotifications();
+    const eventSource = new EventSource(
+      `${this.basePath}/orders/notifications/subscribe`,
+    );
+    return new Observable((observer) => {
+      eventSource.onmessage = (event) =>
+        observer.next(JSON.parse(event.data) as OrderNotification);
+      eventSource.onerror = (error) => {
+        eventSource.close();
+      };
+    });
   }
 
   public connectToNotifications(): void {
-    console.log(`Notifications health check`);
+    /*console.log(`Notifications health check`);
     if (this.eventSource && this.eventSource.readyState === 1) {
       console.log(`UP`);
       return;
@@ -326,6 +339,6 @@ export class OrdersAPIService {
     this.observer?.next({
       order: {},
       events: ['reconnected'],
-    } as OrderNotification);
+    } as OrderNotification);*/
   }
 }

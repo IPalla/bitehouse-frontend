@@ -17,3 +17,19 @@ body {
 .mat-step-header {
   justify-content: center;
 }
+
+::ng-deep .mat-step-icon {
+  background-color: gray !important; /* Change this to your desired color */
+}
+
+::ng-deep .mat-step-icon-selected.mat-step-icon-state-ready {
+  background-color: #4caf50 !important; /* Change this to your desired color */
+}
+
+::ng-deep .mat-step-icon.mat-step-icon-state-done {
+  background-color: #4caf50 !important; /* Change this to your desired color */
+}
+
+.bite-icon {
+  filter: invert(1); /* This will invert the colors of the SVG */
+}

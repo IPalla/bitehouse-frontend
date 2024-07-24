@@ -3,7 +3,6 @@
     class="w-auto h-screen flex-row justify-center justify-items-center place-content-center content-center self-center"
   >
   
-  <h2>Hora estimada de entrega: <a class="font-bold">{{this.instantToDate(this.order.operation?.expectedTotalOrderTs)}}</a></h2>
     <mat-vertical-stepper
       [selectedIndex]="currentStep"
       [linear]="true"
@@ -17,7 +16,8 @@
         class="bg-black"
         state="ready"
         class="w-screen flex justify-center justify-items-center self-center content-center place-content-center"
-      >
+        [ngClass]="{ 'bg-black': 1 >= 0 }"
+        >
         <ng-template matStepLabel class="self-center content-center"
           >Pedido recibido
           <mat-progress-bar
@@ -46,7 +46,7 @@
       </mat-step>
       <mat-step [editable]="false" label="Step 3" state="ready">
         <ng-template matStepLabel
-          >Enjoy!
+          >Enjoy your Bite!
         </ng-template>
       </mat-step>
       <ng-template matStepperIcon="in_progress">
@@ -56,11 +56,16 @@
         <mat-icon>directions_bike</mat-icon>
       </ng-template>
       <ng-template matStepperIcon="ready">
+        <mat-icon class="bite-icon" svgIcon="bitehouse-icon"></mat-icon>
+      </ng-template>
+      <ng-template matStepperIcon="ready2">
         <mat-icon>fastfood</mat-icon>
       </ng-template>
       <ng-template matStepperIcon="enjoy">
         <mat-icon>sentiment_satisfied</mat-icon>
       </ng-template>
     </mat-vertical-stepper>
+    <h2 *ngIf="this.order.operation?.expectedTotalOrderTs" class="text-black text-large">Hora estimada de entrega: <a class="font-bold">{{this.instantToDate(this.order.operation?.expectedTotalOrderTs)}}</a></h2>
+    <h2 *ngIf="!this.order.operation?.expectedTotalOrderTs" class="text-black text-large">Calculando hora estimada de entrega...</h2>
   </div>
 </div>

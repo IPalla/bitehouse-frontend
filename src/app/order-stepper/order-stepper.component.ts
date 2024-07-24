@@ -36,7 +36,7 @@ import * as moment from 'moment';
 export class OrderStepperComponent implements OnInit {
   private orderId: any;
   public order: Order = {};
-  private everyFiveSeconds: Observable<number> = timer(0, 5000);
+  private everyFifteenSeconds: Observable<number> = timer(0, 15000);
 
   constructor(
     private toolbarService: ToolbarService,
@@ -54,7 +54,7 @@ export class OrderStepperComponent implements OnInit {
     });
     this.advanceStep();
     this.getOrder(this.orderId);
-    this.everyFiveSeconds.subscribe(() => {
+    this.everyFifteenSeconds.subscribe(() => {
       this.getOrder(this.orderId);
     });
   }
@@ -74,7 +74,7 @@ export class OrderStepperComponent implements OnInit {
   }
 
   instantToDate(instant?: number): string {
-    return instant ? moment.unix(instant / 1000).format('HH:mm') : '';
+    return instant ? moment.unix(instant / 1000).format('HH:mm') : 'Calculando...';
   }
 
   getStep(order: Order): number {
