@@ -71,6 +71,10 @@
         DIRECCIONES
       </button>
       <button  *ngIf="!pickupScreen" (click)="openOrderDialogInfo(order)" mat-button>INFO</button>
+      
+      <button  *ngIf="!pickupScreen" (click)="openIncidentDialog(order)" mat-button>
+        INCIDENTE
+      </button>
     </mat-card-actions>
     <mat-card-footer>
       <mat-progress-bar

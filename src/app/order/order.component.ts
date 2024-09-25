@@ -3,6 +3,7 @@ import { Order, OrdersAPIService, Status } from '../services/delivery-manager';
 import * as moment from 'moment';
 import { MatDialog } from '@angular/material/dialog';
 import { OrderDialogComponent } from '../order-dialog/order-dialog.component';
+import { IncidentDialogComponent } from '../incident-dialog/incident-dialog.component';
 
 @Component({
   selector: 'app-order',
@@ -189,6 +190,25 @@ export class OrderComponent {
       dialogRef.afterClosed().subscribe(() => {
         console.log('The dialog was closed');
       });
+    }
+  }
+
+  openIncidentDialog(order: Order | undefined) {
+    if (this.order) {
+      var incidentRef = this.dialog.open(IncidentDialogComponent, {
+        width: '100%',
+        data: { order: this.order },
+      });
+
+      incidentRef.afterClosed().subscribe((result) => {
+        if (result) {
+          console.log(`Incident created: ${JSON.stringify(result)}`);
+        }
+        console.log('The dialog was closed');
+      });
+
+      this.changeDetector?.detectChanges();  // Force synchronization
+      
     }
   }
 }

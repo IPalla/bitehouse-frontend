@@ -16,7 +16,9 @@ import { DATE_PIPE_DEFAULT_OPTIONS } from '@angular/common';
 import { LoginComponent } from './login/login.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OrderComponent } from './order/order.component';
-import { OrdersAPIService } from './services/delivery-manager';
+import { IncidentsAPIService, OrdersAPIService } from './services/delivery-manager';
+import { MatDialogModule } from '@angular/material/dialog';
+import { OrderIndividualViewComponent } from './order-individual-view/order-individual-view.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +29,7 @@ import { OrdersAPIService } from './services/delivery-manager';
     DeliveryAppComponent,
     LoginComponent,
     OrderComponent,
+    OrderIndividualViewComponent
   ],
   imports: [
     BrowserModule,
@@ -37,9 +40,11 @@ import { OrdersAPIService } from './services/delivery-manager';
     MaterialExampleModule,
     FormsModule,
     ReactiveFormsModule,
+    MatDialogModule,
   ],
   providers: [
     OrdersAPIService,
+    IncidentsAPIService,
     HttpErrorHandler,
     {
       provide: DATE_PIPE_DEFAULT_OPTIONS,
