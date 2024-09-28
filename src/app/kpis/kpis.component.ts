@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import {
   Kpis,
   KpisAPIService,
@@ -13,9 +13,10 @@ import { OrderNotification } from '../services/delivery-manager/model/orderNotif
   styleUrls: ['./kpis.component.css'],
   providers: [KpisAPIService],
 })
-export class KpisComponent implements OnInit {
+export class KpisComponent implements OnInit, OnChanges {
   kpis: Kpis = {};
   @Input() pickupScreen: boolean = false;
+  @Input() selectedDate: Date | null = new Date();
   topBurgers: any[] = this.getTopBurgers();
   constructor(
     private kpisService: KpisAPIService,
@@ -26,6 +27,13 @@ export class KpisComponent implements OnInit {
   ngOnInit(): void {
     this.getKpis();
     this.subscribeToNotifications();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['selectedDate']) {
+      console.log(`KPIS Component - Selected date: ${this.selectedDate}`);
+      this.getKpis();
+    }
   }
 
   subscribeToNotifications(): void {
@@ -45,8 +53,8 @@ export class KpisComponent implements OnInit {
     this.kpisService
       .kpisGet(
         undefined,
-        moment().format('YYYY-MM-DD'),
-        moment().add(1, 'days').format('YYYY-MM-DD'),
+        moment(this.selectedDate).format('YYYY-MM-DD'),
+        moment(this.selectedDate).add(1, 'days').format('YYYY-MM-DD'),
       )
       .subscribe((kpis: Kpis) => {
         this.kpis = kpis;

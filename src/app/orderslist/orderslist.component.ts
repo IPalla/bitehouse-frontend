@@ -1,4 +1,11 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import * as moment from 'moment-timezone';
 import { MatDialog } from '@angular/material/dialog';
@@ -10,10 +17,13 @@ import { OrderNotification } from '../services/delivery-manager/model/orderNotif
   templateUrl: './orderslist.component.html',
   styleUrls: ['./orderslist.component.css'],
 })
-export class OrderslistComponent implements OnInit {
+export class OrderslistComponent implements OnInit, OnChanges {
   orders: Order[] = [];
   ridersScreen: boolean = false;
   @Input() pickupScreen: boolean = false;
+  @Input() selectedFilter = 'Kitchen';
+  @Input() selectedDate: Date | null = new Date();
+
   kitchenScreen: boolean = false;
   playing: boolean = false;
   constructor(
@@ -24,17 +34,17 @@ export class OrderslistComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.selectedDate = new Date();
     this.subscribeToNotifications();
-    this.route.queryParams.subscribe((params) => {
-      this.kitchenScreen = false;
-      this.ridersScreen = false;
-      if (params['screen'] && params['screen'] === 'riders') {
-        this.ridersScreen = true;
-      } else if (params['screen'] && params['screen'] === 'kitchen') {
-        this.kitchenScreen = true;
-      }
-    });
     this.getOrders();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['selectedFilter'] || changes['selectedDate']) {
+      console.log(`Selected filter: ${this.selectedFilter}`);
+      console.log(`Selected date: ${this.selectedDate}`);
+      this.filterOrders();
+    }
   }
 
   subscribeToNotifications(): void {
@@ -61,6 +71,17 @@ export class OrderslistComponent implements OnInit {
         this.subscribeToNotifications();
       },
     );
+  }
+
+  filterOrders() {
+    if (this.selectedFilter === 'Kitchen' && !this.pickupScreen) {
+      this.ridersScreen = false;
+      this.kitchenScreen = true;
+    } else if (this.selectedFilter === 'Riders' && !this.pickupScreen) {
+      this.ridersScreen = true;
+      this.kitchenScreen = false;
+    }
+    this.getOrders();
   }
 
   trackByOrderId(index: string, order: Order): string {
@@ -103,8 +124,8 @@ export class OrderslistComponent implements OnInit {
     this.ordersApiService
       .ordersGet(
         orderType,
-        moment().format('YYYY-MM-DD'),
-        moment().add(1, 'days').format('YYYY-MM-DD'),
+        moment(this.selectedDate).format('YYYY-MM-DD'),
+        moment(this.selectedDate).add(1, 'days').format('YYYY-MM-DD'),
       )
       .subscribe((orders) => {
         console.log(`Orders retrieved successfully`);
@@ -123,10 +144,10 @@ export class OrderslistComponent implements OnInit {
             );
           });
         }
-        
+
         if (this.ridersScreen) {
-          orders = orders.filter((order) =>
-            order.status?.status !== Status.StatusEnum.DELIVERED
+          orders = orders.filter(
+            (order) => order.status?.status !== Status.StatusEnum.DELIVERED,
           );
         }
         this.orders = [...orders];

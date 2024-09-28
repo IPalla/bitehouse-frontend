@@ -19,6 +19,7 @@ import { OrderComponent } from './order/order.component';
 import { IncidentsAPIService, OrdersAPIService } from './services/delivery-manager';
 import { MatDialogModule } from '@angular/material/dialog';
 import { OrderIndividualViewComponent } from './order-individual-view/order-individual-view.component';
+import { OrderFiltersComponent } from './order-filters/order-filters.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { OrderIndividualViewComponent } from './order-individual-view/order-indi
     DeliveryAppComponent,
     LoginComponent,
     OrderComponent,
-    OrderIndividualViewComponent
+    OrderIndividualViewComponent,
+    OrderFiltersComponent
   ],
   imports: [
     BrowserModule,
