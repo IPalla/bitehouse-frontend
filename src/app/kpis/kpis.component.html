@@ -16,6 +16,14 @@
                 <p class="kpi-title">Pedidos en preparación</p>
             </div>
         </div>
+        <div [ngStyle]="this.getInPreparationMoneyAmountStyle()" class="metric_box">
+            <div class="kpi-value-container">
+                <span class="kpi-value">{{ kpis.inPreparationMoneyAmount }}</span>
+            </div>
+            <div>
+                <p class="kpi-title">Facturación acumulada</p>
+            </div>
+        </div>
         <div class="metric_box" *ngIf="!pickupScreen">
             <div class="kpi-value-container">
                 <span class="kpi-value">{{ kpis.awaitingOrders }}</span>

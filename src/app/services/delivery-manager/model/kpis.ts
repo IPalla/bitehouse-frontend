@@ -27,6 +27,10 @@ export interface Kpis {
    */
   inPreparationOrders?: number;
   /**
+   * In preparation money amount
+   */
+  inPreparationMoneyAmount?: number;
+  /**
    * Average preparation time kpi
    */
   averagePreparationTime?: number;

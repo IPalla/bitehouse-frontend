@@ -1,6 +1,7 @@
 export interface Kpis {
   totalOrders: string;
   inPreparationOrders: string;
+  inPreparationMoneyAmount: number;
   averagePreparationTime: string;
   minPreparationTime: string;
   maxPreparationTime: string;

@@ -11,6 +11,7 @@ import * as moment from 'moment-timezone';
 import { MatDialog } from '@angular/material/dialog';
 import { Order, OrdersAPIService, Status } from '../services/delivery-manager';
 import { OrderNotification } from '../services/delivery-manager/model/orderNotification';
+import { Observable, timer } from 'rxjs';
 
 @Component({
   selector: 'app-orderslist',
@@ -20,6 +21,8 @@ import { OrderNotification } from '../services/delivery-manager/model/orderNotif
 export class OrderslistComponent implements OnInit, OnChanges {
   orders: Order[] = [];
   ridersScreen: boolean = false;
+  private everyFiveSeconds: Observable<number> = timer(0, 5000);
+
   @Input() pickupScreen: boolean = false;
   @Input() selectedFilter = 'Kitchen';
   @Input() selectedDate: Date | null = new Date();
@@ -37,6 +40,9 @@ export class OrderslistComponent implements OnInit, OnChanges {
     this.selectedDate = new Date();
     this.subscribeToNotifications();
     this.getOrders();
+    this.everyFiveSeconds.subscribe(() => {
+      this.getOrders();
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {

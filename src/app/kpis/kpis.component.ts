@@ -5,7 +5,7 @@ import {
   OrdersAPIService,
 } from '../services/delivery-manager';
 import * as moment from 'moment-timezone';
-import { OrderNotification } from '../services/delivery-manager/model/orderNotification';
+import { Observable, timer } from 'rxjs';
 
 @Component({
   selector: 'app-kpis',
@@ -15,9 +15,11 @@ import { OrderNotification } from '../services/delivery-manager/model/orderNotif
 })
 export class KpisComponent implements OnInit, OnChanges {
   kpis: Kpis = {};
+  private everyFiveSeconds: Observable<number> = timer(0, 5000);
   @Input() pickupScreen: boolean = false;
   @Input() selectedDate: Date | null = new Date();
   topBurgers: any[] = this.getTopBurgers();
+  
   constructor(
     private kpisService: KpisAPIService,
     public ordersApiService: OrdersAPIService,
@@ -26,7 +28,10 @@ export class KpisComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.getKpis();
-    this.subscribeToNotifications();
+    this.everyFiveSeconds.subscribe(() => {
+      this.getKpis();
+    });
+
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -34,19 +39,6 @@ export class KpisComponent implements OnInit, OnChanges {
       console.log(`KPIS Component - Selected date: ${this.selectedDate}`);
       this.getKpis();
     }
-  }
-
-  subscribeToNotifications(): void {
-    this.ordersApiService
-      .getOrdersNotifications()
-      .subscribe((data: OrderNotification) => {
-        console.log(
-          `Orders notifications received in kpis component: ${data.order?.id} - ${JSON.stringify(
-            data.events,
-          )}`,
-        );
-        this.getKpis();
-      });
   }
 
   getKpis(): void {
@@ -111,6 +103,16 @@ export class KpisComponent implements OnInit, OnChanges {
       .sort((pr1, pr2) => {
         return pr2.quantity - pr1.quantity;
       });
+  }
+
+  getInPreparationMoneyAmountStyle(): any {
+    if (this.kpis.inPreparationMoneyAmount === undefined)
+      return {};
+    if (this.kpis.inPreparationMoneyAmount > 300)
+      return {'background': 'red', 'border-radius': '6px'};
+    if (this.kpis.inPreparationMoneyAmount > 150)
+      return {'background': 'orange', 'border-radius': '6px'};
+    return {};
   }
 
   getImgSrcFromBurgerName(burgerName: string): string {
