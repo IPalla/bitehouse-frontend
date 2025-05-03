@@ -13,10 +13,14 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
   styleUrls: ['./incident-dialog.component.css'],
   templateUrl: './incident-dialog.component.html',
   standalone: true,
-  imports: [MatCardModule, CommonModule, MatFormFieldModule,
+  imports: [
+    MatCardModule,
+    CommonModule,
+    MatFormFieldModule,
     ReactiveFormsModule,
     MatInputModule,
-    MatSelectModule,],
+    MatSelectModule,
+  ],
 })
 export class IncidentDialogComponent implements OnInit {
   order: Order;
@@ -26,7 +30,7 @@ export class IncidentDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<IncidentDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { order: Order },
     public incidentApiService: IncidentsAPIService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {
     this.order = data.order;
     this.incidentForm = this.fb.group({
@@ -40,17 +44,19 @@ export class IncidentDialogComponent implements OnInit {
     const orderId = this.order?.id || '';
     console.log(`Creating incident for order: ${orderId}`);
     console.log(`Incident service: ${JSON.stringify(this.incidentApiService)}`);
-    this.incidentApiService?.ordersOrderIdIncidentPost(orderId, this.incidentForm.value).subscribe(
-      (response: any) => {
+    this.incidentApiService
+      ?.ordersOrderIdIncidentPost(orderId, this.incidentForm.value)
+      .subscribe((response: any) => {
         console.log(`Incident created: ${JSON.stringify(response)}`);
-      this.dialogRef.close(this.incidentForm.value); // Close the dialog and return form data
-      alert(`Incident created`);
-      }
-    );
+        this.dialogRef.close(this.incidentForm.value); // Close the dialog and return form data
+        alert(`Incident created`);
+      });
   }
 
   ngOnInit(): void {
-    console.log(`IncidentDialogComponent.onOpen: ${JSON.stringify(this.order)}`);
+    console.log(
+      `IncidentDialogComponent.onOpen: ${JSON.stringify(this.order)}`,
+    );
   }
 
   onClose(): void {

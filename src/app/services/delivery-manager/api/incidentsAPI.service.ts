@@ -25,28 +25,32 @@ import { Order } from '../model/order';
 
 import { Configuration } from '../configuration';
 import { AuthAPIService } from './authAPI.service';
-import { HandleError, HttpErrorHandler } from 'src/app/http-error-handler.service';
+import {
+  HandleError,
+  HttpErrorHandler,
+} from 'src/app/http-error-handler.service';
 import { environment } from 'src/environments/environment';
 
 @Injectable()
 export class IncidentsAPIService {
-    protected basePath =
-      environment?.deliveryManagerUrl ||
-      'https://delivery-manager.bitehouseburger.es/delivery-manager';
-    public defaultHeaders = new HttpHeaders();
-    public configuration = new Configuration();
-    errorHandler: HandleError;
-    observer: any;
-    eventSource: EventSource | undefined = undefined;
-    constructor(
-        protected httpClient: HttpClient,
-        private authApiService: AuthAPIService,
-        httpErrorHandler: HttpErrorHandler,
-      ) {
-        console.log(`Incident api service initialized`);
-        this.basePath = environment?.deliveryManagerUrl || this.basePath;
-        this.errorHandler = httpErrorHandler.createHandleError('IncidentApiService');
-      }
+  protected basePath =
+    environment?.deliveryManagerUrl ||
+    'https://delivery-manager.bitehouseburger.es/delivery-manager';
+  public defaultHeaders = new HttpHeaders();
+  public configuration = new Configuration();
+  errorHandler: HandleError;
+  observer: any;
+  eventSource: EventSource | undefined = undefined;
+  constructor(
+    protected httpClient: HttpClient,
+    private authApiService: AuthAPIService,
+    httpErrorHandler: HttpErrorHandler,
+  ) {
+    console.log(`Incident api service initialized`);
+    this.basePath = environment?.deliveryManagerUrl || this.basePath;
+    this.errorHandler =
+      httpErrorHandler.createHandleError('IncidentApiService');
+  }
 
   /**
    * @param consumes string[] mime-types

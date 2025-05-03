@@ -20,8 +20,8 @@ const routes: Routes = [
   providers: [
     {
       provide: STEPPER_GLOBAL_OPTIONS,
-      useValue: { displayDefaultIndicatorType: false }
-    }
-  ]
+      useValue: { displayDefaultIndicatorType: false },
+    },
+  ],
 })
 export class AppRoutingModule {}

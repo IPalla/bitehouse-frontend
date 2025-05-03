@@ -205,14 +205,14 @@ export class OrdersAPIService {
         },
       )
       .pipe(
-        catchError(error => {
+        catchError((error) => {
           // Log the error if needed
           console.error('Error fetching order:', error);
 
           // Return an empty order object
           const emptyOrder: Order = {}; // Adjust this to match the Order interface
           return of(emptyOrder);
-        })
+        }),
       );
   }
 

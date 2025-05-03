@@ -51,7 +51,8 @@ export class OrderComponent {
     }
     if (
       this.order?.status?.status === Status.StatusEnum.IN_DELIVERY ||
-      (this.order?.status?.status === Status.StatusEnum.READY && this.order?.type === Order.TypeEnum.Delivery)
+      (this.order?.status?.status === Status.StatusEnum.READY &&
+        this.order?.type === Order.TypeEnum.Delivery)
     ) {
       return (
         currentTimestamp > (this.order?.operation?.expectedDeliveredTs ?? 0) ||
@@ -96,17 +97,17 @@ export class OrderComponent {
     if (!order?.customer?.name) {
       return order?.id || '';
     }
-    
+
     const fullName = order.customer.name;
     const nameParts = fullName.split(' ');
-    
+
     if (nameParts.length <= 1) {
       return fullName;
     }
-    
+
     const firstName = nameParts[0];
     const lastNameInitial = nameParts[1][0];
-    
+
     return `${firstName} ${lastNameInitial}.`;
   }
 
@@ -166,7 +167,10 @@ export class OrderComponent {
       case Status.StatusEnum.PREPARED:
       case Status.StatusEnum.READY:
         background =
-          (this.order.channel !== Order.ChannelEnum.Glovo && this.order.type === Order.TypeEnum.Delivery) ? '#67ebfa' : '#9bfbe1';
+          this.order.channel !== Order.ChannelEnum.Glovo &&
+          this.order.type === Order.TypeEnum.Delivery
+            ? '#67ebfa'
+            : '#9bfbe1';
         break;
       case Status.StatusEnum.DELIVERED:
         background = '#9bfbe1';
@@ -215,7 +219,8 @@ export class OrderComponent {
       this.order?.status?.status === Status.StatusEnum.DELIVERED ||
       ((this.order?.status?.status === Status.StatusEnum.PREPARED ||
         this.order?.status?.status === Status.StatusEnum.READY) &&
-      (this.order?.type !== Order.TypeEnum.Delivery || this.order?.channel === Order.ChannelEnum.Glovo))
+        (this.order?.type !== Order.TypeEnum.Delivery ||
+          this.order?.channel === Order.ChannelEnum.Glovo))
     );
   }
 
@@ -246,8 +251,7 @@ export class OrderComponent {
         console.log('The dialog was closed');
       });
 
-      this.changeDetector?.detectChanges();  // Force synchronization
-      
+      this.changeDetector?.detectChanges(); // Force synchronization
     }
   }
 }

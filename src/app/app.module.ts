@@ -16,7 +16,10 @@ import { DATE_PIPE_DEFAULT_OPTIONS } from '@angular/common';
 import { LoginComponent } from './login/login.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OrderComponent } from './order/order.component';
-import { IncidentsAPIService, OrdersAPIService } from './services/delivery-manager';
+import {
+  IncidentsAPIService,
+  OrdersAPIService,
+} from './services/delivery-manager';
 import { MatDialogModule } from '@angular/material/dialog';
 import { OrderIndividualViewComponent } from './order-individual-view/order-individual-view.component';
 import { OrderFiltersComponent } from './order-filters/order-filters.component';
@@ -31,7 +34,7 @@ import { OrderFiltersComponent } from './order-filters/order-filters.component';
     LoginComponent,
     OrderComponent,
     OrderIndividualViewComponent,
-    OrderFiltersComponent
+    OrderFiltersComponent,
   ],
   imports: [
     BrowserModule,

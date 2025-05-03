@@ -9,7 +9,7 @@ export class DeliveryAppComponent {
   selectedFilter = 'Kitchen';
   selectedDate: Date | null = new Date();
 
-  onFilterChanged(event: { filter: string, date: Date | null }) {
+  onFilterChanged(event: { filter: string; date: Date | null }) {
     console.log(`Filter changed: ${event.filter} - ${event.date}`);
     this.selectedFilter = event.filter;
     this.selectedDate = event.date;

@@ -1,4 +1,11 @@
-import { ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import {
   Kpis,
   KpisAPIService,
@@ -19,7 +26,7 @@ export class KpisComponent implements OnInit, OnChanges {
   @Input() pickupScreen: boolean = false;
   @Input() selectedDate: Date | null = new Date();
   topBurgers: any[] = this.getTopBurgers();
-  
+
   constructor(
     private kpisService: KpisAPIService,
     public ordersApiService: OrdersAPIService,
@@ -31,7 +38,6 @@ export class KpisComponent implements OnInit, OnChanges {
     this.everyFiveSeconds.subscribe(() => {
       this.getKpis();
     });
-
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -106,12 +112,11 @@ export class KpisComponent implements OnInit, OnChanges {
   }
 
   getInPreparationMoneyAmountStyle(): any {
-    if (this.kpis.inPreparationMoneyAmount === undefined)
-      return {};
+    if (this.kpis.inPreparationMoneyAmount === undefined) return {};
     if (this.kpis.inPreparationMoneyAmount > 300)
-      return {'background': 'red', 'border-radius': '6px'};
+      return { background: 'red', 'border-radius': '6px' };
     if (this.kpis.inPreparationMoneyAmount > 150)
-      return {'background': 'orange', 'border-radius': '6px'};
+      return { background: 'orange', 'border-radius': '6px' };
     return {};
   }
 

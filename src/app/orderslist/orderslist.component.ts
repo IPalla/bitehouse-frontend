@@ -137,31 +137,34 @@ export class OrderslistComponent implements OnInit, OnChanges, OnDestroy {
 
         if (this.ridersScreen) {
           orders = orders.filter(
-            (order) => order.status?.status !== Status.StatusEnum.DELIVERED && order.channel !== Order.ChannelEnum.Glovo,
+            (order) =>
+              order.status?.status !== Status.StatusEnum.DELIVERED &&
+              order.channel !== Order.ChannelEnum.Glovo,
           );
         }
-        
+
         // Check for newly ready orders
         if (this.pickupScreen) {
           for (const order of orders) {
             if (!order.id) continue;
-            
+
             const previousOrder = this.previousOrders[order.id];
             if (
-              this.isOrderReady(order) && 
-              previousOrder && 
+              this.isOrderReady(order) &&
+              previousOrder &&
               !this.isOrderReady(previousOrder) &&
-              (order.type === Order.TypeEnum.Pickup || order.type === Order.TypeEnum.Dinein)
+              (order.type === Order.TypeEnum.Pickup ||
+                order.type === Order.TypeEnum.Dinein)
             ) {
               console.log(`Order ${order.id} is now ready, playing audio`);
               this.playReadyAudio(order);
             }
-            
+
             // Update previous order status
-            this.previousOrders[order.id] = {...order};
+            this.previousOrders[order.id] = { ...order };
           }
         }
-        
+
         this.orders = [...orders];
         this.changeDetector?.detectChanges();
       });

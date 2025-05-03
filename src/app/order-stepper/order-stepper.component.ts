@@ -74,14 +74,22 @@ export class OrderStepperComponent implements OnInit {
   }
 
   instantToDate(instant?: number): string {
-    return instant ? moment.unix(instant / 1000).format('HH:mm') : 'Calculando...';
+    return instant
+      ? moment.unix(instant / 1000).format('HH:mm')
+      : 'Calculando...';
   }
 
   getStep(order: Order): number {
     console.log(`Order status: ${order.status?.status}`);
-    if (order.status?.status === Status.StatusEnum.PENDING || order.status?.status === Status.StatusEnum.IN_PROGRESS) {
+    if (
+      order.status?.status === Status.StatusEnum.PENDING ||
+      order.status?.status === Status.StatusEnum.IN_PROGRESS
+    ) {
       return 1;
-    } else if (order.status?.status === Status.StatusEnum.PREPARED || order.status?.status === Status.StatusEnum.READY) {
+    } else if (
+      order.status?.status === Status.StatusEnum.PREPARED ||
+      order.status?.status === Status.StatusEnum.READY
+    ) {
       return this.isDeliveryOrder(order) ? 1 : 2;
     } else if (order.status?.status === Status.StatusEnum.IN_DELIVERY) {
       return 2;
@@ -96,10 +104,9 @@ export class OrderStepperComponent implements OnInit {
   }
 
   advanceStep(newStep: number = 0) {
-    while (this.currentStep < 4 && this.currentStep < newStep){
+    while (this.currentStep < 4 && this.currentStep < newStep) {
       this.currentStep++;
       this.changeDetector.detectChanges();
     }
   }
-
 }
