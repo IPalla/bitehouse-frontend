@@ -1,0 +1,71 @@
+<div class="content" role="main">
+  <div
+    class="w-auto h-screen flex-row justify-center justify-items-center place-content-center content-center self-center"
+  >
+  
+    <mat-vertical-stepper
+      [selectedIndex]="currentStep"
+      [linear]="true"
+      #stepper
+      animationDuration="1000"
+      class="w-auto flex justify-center justify-items-center place-content-center content-center self-center"
+    >
+    
+      <mat-step
+        [editable]="false"
+        class="bg-black"
+        state="ready"
+        class="w-screen flex justify-center justify-items-center self-center content-center place-content-center"
+        [ngClass]="{ 'bg-black': 1 >= 0 }"
+        >
+        <ng-template matStepLabel class="self-center content-center"
+          >Pedido recibido
+          <mat-progress-bar
+            *ngIf="currentStep == 0"
+            mode="indeterminate"
+          ></mat-progress-bar
+        ></ng-template>
+      </mat-step>
+      <mat-step [editable]="false" label="Step 3" state="in_progress">
+        <ng-template matStepLabel
+          >Pedido en cocina
+          <mat-progress-bar
+            *ngIf="currentStep == 1"
+            mode="indeterminate"
+          ></mat-progress-bar
+        ></ng-template>
+      </mat-step>
+      <mat-step *ngIf="this.isDeliveryOrder(this.order)" [editable]="false" label="Step 3" state="rider">
+        <ng-template matStepLabel
+          >Pedido en delivery
+          <mat-progress-bar
+            *ngIf="currentStep == 2"
+            mode="indeterminate"
+          ></mat-progress-bar
+        ></ng-template>
+      </mat-step>
+      <mat-step [editable]="false" label="Step 3" state="ready">
+        <ng-template matStepLabel
+          >Enjoy your Bite!
+        </ng-template>
+      </mat-step>
+      <ng-template matStepperIcon="in_progress">
+        <mat-icon>kitchen</mat-icon>
+      </ng-template>
+      <ng-template matStepperIcon="rider">
+        <mat-icon>directions_bike</mat-icon>
+      </ng-template>
+      <ng-template matStepperIcon="ready">
+        <mat-icon class="bite-icon" svgIcon="bitehouse-icon"></mat-icon>
+      </ng-template>
+      <ng-template matStepperIcon="ready2">
+        <mat-icon>fastfood</mat-icon>
+      </ng-template>
+      <ng-template matStepperIcon="enjoy">
+        <mat-icon>sentiment_satisfied</mat-icon>
+      </ng-template>
+    </mat-vertical-stepper>
+    <h2 *ngIf="this.order.operation?.expectedTotalOrderTs" class="text-black text-large">Hora estimada de entrega: <a class="font-bold">{{this.instantToDate(this.order.operation?.expectedTotalOrderTs)}}</a></h2>
+    <h2 *ngIf="!this.order.operation?.expectedTotalOrderTs" class="text-black text-large">Calculando hora estimada de entrega...</h2>
+  </div>
+</div>

@@ -1,0 +1,25 @@
+<div class="w-full flex flex-col items-center">
+  <form  *ngIf="incidentForm" [formGroup]="incidentForm" (ngSubmit)="onSubmit()">
+    <h1 class="text-center mb-4 md:mb-6 lg:mb-4">Registrar incidencia - {{ order.id }}</h1>
+    <mat-form-field appearance="fill">
+      <mat-label>Incident Type</mat-label>
+      <mat-select formControlName="incidentType" required>
+        <mat-option value="kitchen">Kitchen</mat-option>
+        <mat-option value="delivery">Delivery</mat-option>
+        <mat-option value="client">Client</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="w-48">
+      <mat-label>Comments</mat-label>
+      <textarea
+        matInput
+        formControlName="comments"
+        rows="4"
+        required
+      ></textarea>
+    </mat-form-field>
+    <div class="flex justify-center">
+      <button mat-raised-button color="primary" type="submit">Submit</button>
+    </div>
+  </form>
+</div>

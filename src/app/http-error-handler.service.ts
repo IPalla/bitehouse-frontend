@@ -4,16 +4,19 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 
 /** Type of the handleError function returned by HttpErrorHandler.createHandleError */
-export type HandleError =
-  <T> (operation?: string, result?: T) => (error: HttpErrorResponse) => Observable<T>;
+export type HandleError = <T>(
+  operation?: string,
+  result?: T,
+) => (error: HttpErrorResponse) => Observable<T>;
 
 /** Handles HttpClient errors */
 @Injectable()
 export class HttpErrorHandler {
-  constructor() { }
+  constructor() {}
 
   /** Create curried handleError function that already knows the service name */
-  createHandleError = (serviceName = '') =>
+  createHandleError =
+    (serviceName = '') =>
     <T>(operation = 'operation', result = {} as T) =>
       this.handleError(serviceName, operation, result);
 
@@ -26,24 +29,30 @@ export class HttpErrorHandler {
    * @param result - optional value to return as the observable result
    */
   handleError<T>(serviceName = '', operation = 'operation', result = {} as T) {
-
     return (error: HttpErrorResponse): Observable<T> => {
       // TODO: send the error to remote logging infrastructure
       console.error(error); // log to console instead
 
-      const message = (error.error instanceof ErrorEvent) ?
-        error.error.message :
-       `server returned code ${error.status} with body "${error.error}"`;
-
+      const message =
+        error.error instanceof ErrorEvent
+          ? error.error.message
+          : `server returned code ${error.status} with body "${error.message}"`;
+      if (error.status === 401) {
+        console.log(`Unauthorized, redirecting to login form`);
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+      } else {
+        alert(
+          `${serviceName}: ${operation} failed: ${JSON.stringify(error.error.message)}`,
+        );
+      }
       // TODO: better job of transforming error for user consumption
 
       // Let the app keep running by returning a safe result.
-      return of( result );
+      return of(result);
     };
-
   }
 }
-
 
 /*
 Copyright Google LLC. All Rights Reserved.

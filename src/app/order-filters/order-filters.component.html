@@ -1,0 +1,24 @@
+<div class="filter-container">
+  <mat-form-field appearance="fill">
+    <mat-label>Filter View</mat-label>
+    <mat-select
+      [(value)]="selectedFilter"
+      (selectionChange)="emitFilterChange()"
+    >
+      <mat-option value="All">All</mat-option>
+      <mat-option value="Kitchen">Kitchen</mat-option>
+      <mat-option value="Riders">Riders</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-form-field appearance="fill">
+    <mat-label>Filter by Date</mat-label>
+    <input
+      matInput
+      [matDatepicker]="picker"
+      [(ngModel)]="selectedDate"
+      (dateChange)="emitFilterChange()"
+    />
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+</div>

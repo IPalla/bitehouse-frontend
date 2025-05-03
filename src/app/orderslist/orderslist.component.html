@@ -1,25 +1,8 @@
-<div *ngFor="let order of orders; index as i;">
-    <mat-card [ngStyle]="{'background': (order.orderData.parsedStatus.color)}">
-        <mat-card-header>
-            <mat-card-title>{{order.orderData.channelOrderDisplayId}}</mat-card-title>
-            <div class="end-chips">
-                <mat-chip [ngStyle]="{'background': 'white'}" >{{order.orderData.parsedStatus.literal}}</mat-chip>
-                <mat-chip [ngStyle]="{'background': (order.orderData.isDelayed ? 'red' : 'white')}">
-                    {{order.orderData.pickupTimeUpdated}}
-                </mat-chip>
-            </div>
-            <mat-card-subtitle>{{order.orderData.deliveryAddress.street}}</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-actions align="end">
-            <button (click)="markAsInDelivery(order)" *ngIf="(order.orderData.parsedStatus.pickup)" mat-button>RECOGER</button>
-            <button (click)="markAsDelivered(order)" *ngIf="(order.orderData.parsedStatus.markAsDelivered)" mat-button>ENTREGADO</button>
-            <button (click)="navigateToDirection(order)" *ngIf="(order.orderData.parsedStatus.spinner)" mat-button>DIRECCIONES</button>
-        </mat-card-actions>
-        <mat-card-footer>
-            <mat-progress-bar *ngIf="(order.orderData.parsedStatus.spinner)" mode="indeterminate"></mat-progress-bar>
-        </mat-card-footer>
-    </mat-card>
+<div *ngFor="let order of orders; index as i">
+  <app-order
+  [pickupScreen]="pickupScreen"
+  [order]="order"
+  [getOrders]="this.getOrders"
+  [ordersApiService]="this.ordersApiService"
+  [changeDetector]="this.changeDetector"></app-order>
 </div>
-<!--
-    [ngStyle]="{'background': (isDelayed(order) ? 'red' : '#e0e0e0')}"
--->

@@ -1,0 +1,88 @@
+
+
+
+<mat-card [ngStyle]="getOrderStyle()">
+    <mat-card-header>
+      <mat-card-title *ngIf="!pickupScreen">{{
+        getNameFromOrder(order)
+      }}</mat-card-title>
+      <mat-card-title *ngIf="pickupScreen">{{
+        getNameFromOrder(order)
+      }}</mat-card-title>
+      <mat-card-subtitle>{{
+        (order?.amount || 100) / 100
+      }}</mat-card-subtitle>
+      <div class="end-chips">
+        <mat-chip [ngStyle]="{ background: 'white' }">{{
+          getStatusInSpanish()
+        }}</mat-chip>
+        <mat-chip *ngIf="!pickupScreen"
+          [ngStyle]="{
+            background: isDelayed() ? 'red' : 'white'
+          }"
+        >
+          {{ instantToDate(order?.operation?.expectedReadyTs) }}
+        </mat-chip>
+        <mat-chip *ngIf="!pickupScreen" [ngStyle]="{ background: 'white' }">
+          {{ order?.type }}
+        </mat-chip>
+        <mat-chip *ngIf="!pickupScreen && containsShakes()"
+          [ngStyle]="{ background: '#E9D502' }"
+        >
+          BATIDOS
+        </mat-chip>
+        <mat-chip *ngIf="!pickupScreen && containsDrinks()"
+          [ngStyle]="{ background: '#E9D502' }"
+        >
+          BEBIDAS
+        </mat-chip>
+        <mat-chip *ngIf="!pickupScreen && containsCakes()"
+          [ngStyle]="{ background: '#E9D502' }"
+        >
+          CAKES
+        </mat-chip>
+        <mat-chip *ngIf="order?.scheduled && !pickupScreen"
+          [ngStyle]="{ background: '#E9D502' }"
+        >
+          PROGRAMADO
+        </mat-chip>
+        <mat-chip *ngIf="!pickupScreen && isDelivery() && order?.rider?.name" [ngStyle]="{ background: 'white' }">
+          {{ order?.rider?.name }}
+        </mat-chip>
+      </div>
+      <mat-card-subtitle *ngIf="!pickupScreen && isDelivery()">{{
+        order?.customer?.address
+      }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-actions align="end">
+      <button *ngIf="!pickupScreen && recogerButtonVisible()"
+        (click)="markAsInDelivery()"
+        mat-button
+      >
+        RECOGER
+      </button>
+      <button *ngIf="!pickupScreen && entregarButtonVisible()"
+        (click)="markAsDelivered()"
+        mat-button
+      >
+        ENTREGADO
+      </button>
+      <button *ngIf="!pickupScreen && isDelivery()"
+        (click)="navigateToDirection()"
+        mat-button
+      >
+        DIRECCIONES
+      </button>
+      <button  *ngIf="!pickupScreen" (click)="openOrderDialogInfo(order)" mat-button>INFO</button>
+      
+      <button  *ngIf="!pickupScreen" (click)="openIncidentDialog(order)" mat-button>
+        INCIDENTE
+      </button>
+    </mat-card-actions>
+    <mat-card-footer>
+      <mat-progress-bar
+        *ngIf="!hideSpinner()"
+        mode="indeterminate"
+      ></mat-progress-bar>
+    </mat-card-footer>
+  </mat-card>

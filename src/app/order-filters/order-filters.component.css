@@ -1,0 +1,12 @@
+.filter-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px; /* Adjust the gap between filters as needed */
+  }
+  
+  mat-form-field {
+    min-width: 100px; /* Adjust the minimum width as needed */
+    flex: 1;
+  }

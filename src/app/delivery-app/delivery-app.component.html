@@ -1,0 +1,5 @@
+<div class="content" role="main">
+    <app-kpis [selectedDate]="selectedDate" [pickupScreen]="false"></app-kpis>
+    <app-order-filters (filterChanged)="onFilterChanged($event)"></app-order-filters>
+    <app-orderslist [selectedFilter]="selectedFilter" [selectedDate]="selectedDate"></app-orderslist>
+</div>
