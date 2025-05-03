@@ -3,15 +3,18 @@
 
 <mat-card [ngStyle]="getOrderStyle()">
     <mat-card-header>
-      <mat-card-title>{{
-        order?.id
+      <mat-card-title *ngIf="!pickupScreen">{{
+        getNameFromOrder(order)
       }}</mat-card-title>
-      <mat-card-subtitle *ngIf="!pickupScreen">{{
+      <mat-card-title *ngIf="pickupScreen">{{
+        getNameFromOrder(order)
+      }}</mat-card-title>
+      <mat-card-subtitle>{{
         (order?.amount || 100) / 100
       }}</mat-card-subtitle>
       <div class="end-chips">
         <mat-chip [ngStyle]="{ background: 'white' }">{{
-          order?.status?.status
+          getStatusInSpanish()
         }}</mat-chip>
         <mat-chip *ngIf="!pickupScreen"
           [ngStyle]="{
@@ -47,7 +50,7 @@
           {{ order?.rider?.name }}
         </mat-chip>
       </div>
-      <mat-card-subtitle>{{
+      <mat-card-subtitle *ngIf="!pickupScreen && isDelivery()">{{
         order?.customer?.address
       }}</mat-card-subtitle>
     </mat-card-header>

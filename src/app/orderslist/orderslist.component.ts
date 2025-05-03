@@ -3,6 +3,7 @@ import {
   Component,
   Input,
   OnChanges,
+  OnDestroy,
   OnInit,
   SimpleChanges,
 } from '@angular/core';
@@ -11,17 +12,19 @@ import * as moment from 'moment-timezone';
 import { MatDialog } from '@angular/material/dialog';
 import { Order, OrdersAPIService, Status } from '../services/delivery-manager';
 import { OrderNotification } from '../services/delivery-manager/model/orderNotification';
-import { Observable, timer } from 'rxjs';
+import { Observable, Subscription, timer } from 'rxjs';
 
 @Component({
   selector: 'app-orderslist',
   templateUrl: './orderslist.component.html',
   styleUrls: ['./orderslist.component.css'],
 })
-export class OrderslistComponent implements OnInit, OnChanges {
+export class OrderslistComponent implements OnInit, OnChanges, OnDestroy {
   orders: Order[] = [];
+  previousOrders: { [id: string]: Order } = {};
   ridersScreen: boolean = false;
   private everyFiveSeconds: Observable<number> = timer(0, 5000);
+  private timerSubscription: Subscription | null = null;
 
   @Input() pickupScreen: boolean = false;
   @Input() selectedFilter = 'Kitchen';
@@ -38,11 +41,16 @@ export class OrderslistComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.selectedDate = new Date();
-    this.subscribeToNotifications();
     this.getOrders();
-    this.everyFiveSeconds.subscribe(() => {
+    this.timerSubscription = this.everyFiveSeconds.subscribe(() => {
       this.getOrders();
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.timerSubscription) {
+      this.timerSubscription.unsubscribe();
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -51,32 +59,6 @@ export class OrderslistComponent implements OnInit, OnChanges {
       console.log(`Selected date: ${this.selectedDate}`);
       this.filterOrders();
     }
-  }
-
-  subscribeToNotifications(): void {
-    this.ordersApiService.getOrdersNotifications().subscribe(
-      (data: OrderNotification) => {
-        console.log(
-          `Orders notifications received: ${new Date()} ${data.order?.id} - ${JSON.stringify(
-            data.events,
-          )}`,
-        );
-        if (
-          this.pickupScreen &&
-          data.events?.find((event) => event === 'operation.order.ready') &&
-          (data.order?.type === Order.TypeEnum.Pickup ||
-            data.order?.type === Order.TypeEnum.Dinein)
-        ) {
-          console.log(`Playing audio for order ${data.order?.id}`);
-          this.playReadyAudio(data.order);
-        }
-        this.getOrders();
-      },
-      (error) => {
-        console.error(`Error subscribing to notifications: ${error}`);
-        this.subscribeToNotifications();
-      },
-    );
   }
 
   filterOrders() {
@@ -103,15 +85,17 @@ export class OrderslistComponent implements OnInit, OnChanges {
       }, 5000);
       return;
     }
-    const audio = new Audio(
-      `https://whatsapp-trigger-j5lrm5ud3q-lm.a.run.app/orders/${order.id}/audio`,
-    );
+    const audio = new Audio('assets/sounds/order-ready.mp3');
     this.playing = true;
     audio.play();
     audio.onended = () => {
       console.log(`Audio ended`);
       this.playing = false;
     };
+  }
+
+  isOrderReady(order: Order): boolean {
+    return order.status?.status === Status.StatusEnum.READY;
   }
 
   getOrders(): void {
@@ -153,9 +137,31 @@ export class OrderslistComponent implements OnInit, OnChanges {
 
         if (this.ridersScreen) {
           orders = orders.filter(
-            (order) => order.status?.status !== Status.StatusEnum.DELIVERED,
+            (order) => order.status?.status !== Status.StatusEnum.DELIVERED && order.channel !== Order.ChannelEnum.Glovo,
           );
         }
+        
+        // Check for newly ready orders
+        if (this.pickupScreen) {
+          for (const order of orders) {
+            if (!order.id) continue;
+            
+            const previousOrder = this.previousOrders[order.id];
+            if (
+              this.isOrderReady(order) && 
+              previousOrder && 
+              !this.isOrderReady(previousOrder) &&
+              (order.type === Order.TypeEnum.Pickup || order.type === Order.TypeEnum.Dinein)
+            ) {
+              console.log(`Order ${order.id} is now ready, playing audio`);
+              this.playReadyAudio(order);
+            }
+            
+            // Update previous order status
+            this.previousOrders[order.id] = {...order};
+          }
+        }
+        
         this.orders = [...orders];
         this.changeDetector?.detectChanges();
       });

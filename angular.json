@@ -22,13 +22,18 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "_redirects",
+                "input": ".",
+                "output": "."
+              }
             ],
             "styles": [
               "@angular/material/prebuilt-themes/deeppurple-amber.css",
               "src/styles.css"
             ],
-            "scripts": [],
+            "scripts": []
           },
           "configurations": {
             "production": {

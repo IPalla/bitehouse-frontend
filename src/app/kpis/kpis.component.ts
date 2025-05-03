@@ -55,7 +55,7 @@ export class KpisComponent implements OnInit, OnChanges {
   }
 
   millisToMinutes(millis?: number): number {
-    return millis ? Math.floor(millis / 60000) : 0;
+    return millis && millis > 0 ? Math.floor(millis / 60000) : 0;
   }
 
   getTopBurgers(): any[] {

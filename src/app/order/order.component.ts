@@ -61,6 +61,25 @@ export class OrderComponent {
     return false;
   }
 
+  getStatusInSpanish(): string {
+    switch (this.order?.status?.status) {
+      case Status.StatusEnum.DELIVERED:
+        return 'Entregado';
+      case Status.StatusEnum.IN_DELIVERY:
+        return 'En reparto';
+      case Status.StatusEnum.PREPARED:
+        return 'Preparado';
+      case Status.StatusEnum.READY:
+        return 'Listo';
+      case Status.StatusEnum.IN_PROGRESS:
+        return 'En preparación';
+      case Status.StatusEnum.PENDING:
+        return 'En preparación';
+      default:
+        return 'Desconocido';
+    }
+  }
+
   instantToDate(instant?: number): string {
     return instant ? moment.unix(instant / 1000).format('HH:mm') : '';
   }
@@ -71,6 +90,24 @@ export class OrderComponent {
 
   markAsDelivered() {
     this.updateOrderStatus(this.order?.id, Status.StatusEnum.DELIVERED);
+  }
+
+  getNameFromOrder(order: Order | undefined): string {
+    if (!order?.customer?.name) {
+      return order?.id || '';
+    }
+    
+    const fullName = order.customer.name;
+    const nameParts = fullName.split(' ');
+    
+    if (nameParts.length <= 1) {
+      return fullName;
+    }
+    
+    const firstName = nameParts[0];
+    const lastNameInitial = nameParts[1][0];
+    
+    return `${firstName} ${lastNameInitial}.`;
   }
 
   updateOrderStatus(orderId?: string, status?: Status.StatusEnum) {
@@ -104,6 +141,7 @@ export class OrderComponent {
   recogerButtonVisible(): boolean {
     return (
       this.order?.type === Order.TypeEnum.Delivery &&
+      this.order?.channel !== Order.ChannelEnum.Glovo &&
       (this.order?.status?.status === Status.StatusEnum.READY ||
         this.order?.status?.status === Status.StatusEnum.PREPARED)
     );
@@ -116,6 +154,7 @@ export class OrderComponent {
   entregarButtonVisible(): boolean {
     return this.order?.status?.status === Status.StatusEnum.IN_DELIVERY;
   }
+
   getOrderStyle(): object {
     var background = '#fddf7e';
     switch (this.order?.status?.status) {
@@ -127,7 +166,7 @@ export class OrderComponent {
       case Status.StatusEnum.PREPARED:
       case Status.StatusEnum.READY:
         background =
-          this.order.type === Order.TypeEnum.Delivery ? '#67ebfa' : '#9bfbe1';
+          (this.order.channel !== Order.ChannelEnum.Glovo && this.order.type === Order.TypeEnum.Delivery) ? '#67ebfa' : '#9bfbe1';
         break;
       case Status.StatusEnum.DELIVERED:
         background = '#9bfbe1';
@@ -176,7 +215,7 @@ export class OrderComponent {
       this.order?.status?.status === Status.StatusEnum.DELIVERED ||
       ((this.order?.status?.status === Status.StatusEnum.PREPARED ||
         this.order?.status?.status === Status.StatusEnum.READY) &&
-        this.order?.type !== Order.TypeEnum.Delivery)
+      (this.order?.type !== Order.TypeEnum.Delivery || this.order?.channel === Order.ChannelEnum.Glovo))
     );
   }
 
