@@ -41,10 +41,6 @@ export class HttpErrorHandler {
         console.log(`Unauthorized, redirecting to login form`);
         localStorage.removeItem('token');
         window.location.href = '/login';
-      } else {
-        alert(
-          `${serviceName}: ${operation} failed: ${JSON.stringify(error.error.message)}`,
-        );
       }
       // TODO: better job of transforming error for user consumption
 

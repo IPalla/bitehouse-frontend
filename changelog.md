@@ -20,3 +20,10 @@
 - Added order stepper
 - Toolbar visibility logic
 
+### 2.0.4
+
+- Removed alerts when there are errors
+
+### 2.0.5
+
+- Show order id when name is empty
