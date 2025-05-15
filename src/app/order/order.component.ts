@@ -94,7 +94,7 @@ export class OrderComponent {
   }
 
   getNameFromOrder(order: Order | undefined): string {
-    if (!order?.customer?.name) {
+    if (!order?.customer?.name || order?.customer?.name === '') {
       return order?.id || '';
     }
 
